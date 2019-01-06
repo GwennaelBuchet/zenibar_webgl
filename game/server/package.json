@@ -1,0 +1,28 @@
+{
+  "name": "Zenibar_server",
+  "description": "Zenibar backend",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": false,
+  "contributors": [
+    {
+      "name": "Gwennaël Buchet",
+      "email": "gwennael.buchet@gmail.com"
+    }
+  ],
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "mocha -w"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "bootstrap": "^3.3.7",
+    "cors": "^2.8.4",
+    "eslint": "^4.14.0",
+    "express": "^4.16.2",
+    "mocha": "^4.1.0",
+    "nodejs-websocket": "^1.7.1",
+    "vue": "^2.5.13",
+    "vue-resource": "^1.3.5"
+  }
+}
