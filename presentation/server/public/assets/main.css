@@ -2997,6 +2997,21 @@ body.is-covered #wrapper {
 
 }
 
+
+#footer-bonsoir {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+#footer-bonsoir-left {
+    text-align: left;
+}
+#footer-bonsoir-center {
+    text-align: center;
+}
+#footer-bonsoir-right {
+    text-align: right;
+}
+
 /* Footer */
 
 #footer {

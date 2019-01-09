@@ -45,13 +45,24 @@
     </section>
 
     <!-- Footer -->
-    <footer id="footer">
-        <div class="company-logo">
-            <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk" onclick="previousPage()"></div>
-            <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
+    <footer id="footer-bonsoir">
+
+        <div id="footer-bonsoir-left">
+            <img src="../../assets/gwen.png">
         </div>
-        <p>&copy; Zenika 2019. All rights reserved.
-        </p>
+
+        <div id="footer-bonsoir-center">
+            <div class="company-logo">
+                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk" onclick="previousPage()"></div>
+                <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
+            </div>
+            <p>&copy; Zenika 2019. All rights reserved.
+            </p>
+        </div>
+
+        <div id="footer-bonsoir-right">
+            <img src="../../assets/logan.png">
+        </div>
 
     </footer>
 
@@ -73,6 +84,7 @@ void main() {
 }
 
 
+
 </script>
 
 <script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
@@ -89,6 +101,7 @@ void main() {
   vec4 t = uViewDirectionProjectionInverse * vVertexPosition;
   outColor = texture(uSampler, normalize(t.xyz / t.w));
 }
+
 
 
 
@@ -118,6 +131,7 @@ void main() {
 
 
 
+
 </script>
 
 <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
@@ -141,6 +155,7 @@ void main() {
   outColor = texture(uSampler, direction);
   outColor.a = uAlpha;
 }
+
 
 
 
@@ -190,6 +205,7 @@ void main() {
 
 
 
+
 </script>
 
 <script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
@@ -212,6 +228,7 @@ void main(void)
 	outColor = mix(refractionColor, reflectionColor, vFresnel);
 	outColor.a = uAlpha;
 }
+
 
 
 
@@ -241,6 +258,7 @@ void main()
 
     vTextureCoord = aTextureCoord;
 }
+
 
 
 </script>
@@ -303,6 +321,7 @@ void main()
 
 
 
+
 </script>
 
 <script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
@@ -328,6 +347,7 @@ void main()
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
+
 
 
 
@@ -383,6 +403,7 @@ void main()
 
 
 
+
 </script>
 
 <script id="background-vshader" type="x-shader/x-vertex">#version 300 es
@@ -403,6 +424,7 @@ void main(void) {
 
 
 
+
 </script>
 
 <script id="background-fshader" type="x-shader/x-fragment">#version 300 es
@@ -417,6 +439,7 @@ out vec4 outColor;
 void main(void) {
     outColor = texture(uSampler, vTextureCoord);
 }
+
 
 
 
