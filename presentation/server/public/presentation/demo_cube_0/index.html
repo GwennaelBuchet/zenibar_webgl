@@ -36,27 +36,37 @@
                 <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
                 <h3>It's time to come back to the present days...</h3>
             </div>
-            <h2>1er cube fixe et sans éclairage : 300 lignes de code <img src="../../assets/emoji-goutte-de-sueur.png"
+            <h2 style="text-align: center">1er cube fixe et sans éclairage : 300 lignes de code <img src="../../assets/emoji-goutte-de-sueur.png"
                                                                           width="30px" height="30px"/></h2>
         </div>
         <div class="column-right">
-            <h2>Les concepts...</h2>
-            <p>Todo :</p>
-            <ul>
-                <li>Explication pipeline</li>
-                <li>Explication shaders</li>
-                <li>Explication buffers</li>
-                <li>Exemple de code</li>
-            </ul>
+            <h2>4 étapes principales :</h2>
+            <ol>
+                <li>Initier le contexte WebGL</li>
+                <li>Définir les buffers  & les matrices (CPU)</li>
+                <li>Calculer la position des vertices (Vertex shader, GPU)</li>
+                <li>Calculer la couleur des fragments (Fragment shader, GPU)</li>
+            </ol>
+            
+            <img src="../../assets/gl-pipeline.png">
+
+            <hr/>
+
+            <h3>Etape 1 : Initier WebGL</h3>
+
+            <pre class="prettyprint lang-html">
+    &lt;canvas id="scene" width="640px" height="480px" style="background: black"&gt;
+        &lt;p&gt;It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. &lt;/p&gt;
+        &lt;p&gt;It's time to come back to the present days... :( &lt;/p&gt;
+    &lt;/canvas&gt;</pre>
 
             <pre class="prettyprint lang-js">
     const canvas = document.getElementById("scene");
-
     const gl = canvas.getContext("webgl2");
     if (!gl) {
-        canvas.style.display = "none";
-        document.getElementById("noContextLayer").style.display = "block";
+        // WebGL2 is not supported, display an error message or a workaround
     }</pre>
+
         </div>
 
     </section>

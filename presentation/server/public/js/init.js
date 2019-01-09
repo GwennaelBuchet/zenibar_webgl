@@ -31,7 +31,10 @@ const pages = [
 	"/zenibar/index.html",
 	"/archibar/index.html",
 	"/bonsoir/index.html",
-	"/demo_cube/index.html",
+	"/demo_cube_0/index.html",
+	"/demo_cube_1/index.html",
+	"/demo_cube_2/index.html",
+	"/demo_cube_3/index.html",
 	"/demo_cube_anime/index.html",
 
 ];
