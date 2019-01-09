@@ -18,7 +18,7 @@ app.use(express.static('./public/game/'));
 app.use(express.static('./node_modules/'));
 
 app.get('/', function (req, res) {
-	res.sendfile("public/presentation/accueil/index.html");
+	res.sendFile("presentation/accueil/index.html", {root: "./public/"});
 });
 
 app.get('/pictures/:folder/:file', function (req, res) {

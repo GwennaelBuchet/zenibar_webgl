@@ -28,6 +28,8 @@ function goToPage(pathname) {
 
 const pages = [
 	"/accueil/index.html",
+	"/zenibar/index.html",
+	"/archibar/index.html",
 	"/bonsoir/index.html",
 	"/demo_cube/index.html",
 	"/demo_cube_anime/index.html",
