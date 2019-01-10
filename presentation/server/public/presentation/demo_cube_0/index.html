@@ -40,10 +40,9 @@
                                                                           width="30px" height="30px"/></h2>
         </div>
         <div class="column-right">
-            <h2>4 étapes principales :</h2>
+            <h2>3 étapes principales :</h2>
             <ol>
-                <li>Initier le contexte WebGL</li>
-                <li>Définir les buffers  & les matrices (CPU)</li>
+                <li>Définir les buffers & les matrices (CPU)</li>
                 <li>Calculer la position des vertices (Vertex shader, GPU)</li>
                 <li>Calculer la couleur des fragments (Fragment shader, GPU)</li>
             </ol>
@@ -51,6 +50,25 @@
             <img src="../../assets/gl-pipeline.png">
 
             <hr/>
+            <p>
+                En code, ça donne :
+            </p>
+            <p>
+            <ol>
+                <li>Initier le contexte WebGL</li>
+                <li>Définir les buffers des meshes (objets) à afficher</li>
+                <li>Charger les shaders en mémoire</li>
+                <li>Pour chaque boucle d'affichage et chaque mesh :
+                    <ul>
+                        <li>calculer les matrices (world, view, ...)</li>
+                        <li>charger les shaders du mesh</li>
+                        <li>passer les paramètres</li>
+                        <li>charger les buffers</li>
+                        <li>lancer l'affichage</li>
+                    </ul>
+                </li>
+            </ol>
+            </p>
 
             <h3>Etape 1 : Initier WebGL</h3>
 
