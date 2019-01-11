@@ -17,7 +17,7 @@
 <!-- Wrapper -->
 <div id="wrapper">
     <!-- Header -->
-    <header id="header" onclick="nextPage()">
+    <header id="header">
         <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
         <h1>Wave of cubes</h1>
     </header>
@@ -37,17 +37,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer id="footer">
-        <div class="company-logo" onclick="previousPage()">
-            <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
-            <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
-        </div>
-        <p>&copy; Zenika 2019. All rights reserved.
-        </p>
-
-    </footer>
 
 
     <script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
@@ -129,5 +118,16 @@ void main()
     <script src="gl-matrix.js"></script>
     <script src="zenibar.js"></script>
 
+    <script>
+        document.addEventListener("keydown", navigation, false);
+        function navigation(event) {
+            if (event.key.toUpperCase() === "ARROWRIGHT") {
+                nextPage();
+            } else if (event.key.toUpperCase() === "ARROWLEFT") {
+                previousPage();
+            }
+        }
+    </script>
+    
 </body>
 </html>

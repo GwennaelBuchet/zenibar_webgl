@@ -17,14 +17,13 @@
 <!-- Wrapper -->
 <div id="wrapper">
     <!-- Header -->
-    <header id="header" onclick="nextPage()">
+    <header id="header">
         <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
         <h1>Ajout d'un peu d'animation</h1>
     </header>
 
 
     <section id="content">
-
         <div class="column-left">
             <canvas id="scene" width="640px" height="480px" style="background: black">
                 It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
@@ -37,6 +36,12 @@
             </div>
             <h2>1er cube fixe et sans éclairage : 300 lignes de code <img src="../../assets/emoji-goutte-de-sueur.png"
                                                                           width="30px" height="30px"/></h2>
+            <br/>
+            <div class="company-logo">
+                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
+                <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
+                <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
+            </div>
         </div>
         <div class="column-right">
             <h2>Les concepts...</h2>
@@ -60,48 +65,30 @@
 
     </section>
 
-    <!-- Footer -->
-    <footer id="footer">
-        <div class="company-logo" onclick="previousPage()">
-            <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
-            <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
-        </div>
-        <p>&copy; Zenika 2019. All rights reserved.
-        </p>
-
-    </footer>
-
-
     <script id="vshader-simple" type="x-shader/x-vertex">#version 300 es
+        in vec4 aVertexPosition;
+        in vec4 aVertexColor;
 
-in vec4 aVertexPosition;
-in vec4 aVertexColor;
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
 
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
+        out lowp vec4 vColor;
 
-out lowp vec4 vColor;
-
-void main(void) {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-  vColor = aVertexColor;
-}
-
-
+        void main(void) {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        vColor = aVertexColor;
+        }
     </script>
 
     <script id="fshader-simple" type="x-shader/x-fragment">#version 300 es
+        precision mediump float;
 
-precision mediump float;
+        in lowp vec4 vColor;
+        out vec4 outColor;
 
-in lowp vec4 vColor;
-out vec4 outColor;
-
-void main(void) {
-  outColor = vColor;
-}
-
-
+        void main(void) {
+        outColor = vColor;
+        }
     </script>
 
     <script src="../../js/run-prettify.js?skin=sunburst"></script>
@@ -109,5 +96,17 @@ void main(void) {
     <script src="gl-matrix.js"></script>
     <script src="zenibar.js"></script>
 
+    
+    <script>
+        document.addEventListener("keydown", navigation, false);
+        function navigation(event) {
+            if (event.key.toUpperCase() === "ARROWRIGHT") {
+                nextPage();
+            } else if (event.key.toUpperCase() === "ARROWLEFT") {
+                previousPage();
+            }
+        }
+    </script>
+    
 </body>
 </html>

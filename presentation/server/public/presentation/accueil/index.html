@@ -12,14 +12,21 @@
     <link rel="stylesheet" href="../../assets/main.css"/>
 </head>
 <body style="background:#000">
+    <div id="content_center">
+        <img src="../../assets/accueil.png" class="background-image"/>
+    </div>
 
+    <script src="../../js/init.js"></script>
 
-<div id="content_center">
-    <img src="../../assets/accueil.png" onclick="nextPage()" class="background-image"/>
-</div>
-
-<script src="../../js/init.js"></script>
-
-
+    <script>
+        document.addEventListener("keydown", navigation, false);
+        function navigation(event) {
+            if (event.key.toUpperCase() === "ARROWRIGHT") {
+                nextPage();
+            } else if (event.key.toUpperCase() === "ARROWLEFT") {
+                previousPage();
+            }
+        }
+    </script>
 </body>
 </html>
