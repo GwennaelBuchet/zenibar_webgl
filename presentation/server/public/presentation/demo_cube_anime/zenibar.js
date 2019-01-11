@@ -177,8 +177,8 @@ function drawScene(gl, shaderProgramParams, buffers) {
 	                 zNear,
 	                 zFar);
 
-	drawCube(gl, projectionMatrix, shaderProgramParams, buffers, [-3, 0.0, -15.0], [0, -1 * time, 0]);
-	drawCube(gl, projectionMatrix, shaderProgramParams, buffers, [3, 0.0, -15.0], [0, 1 * time, 0.5 * time]);
+	drawCube(gl, projectionMatrix, shaderProgramParams, buffers, [-2.5, 0.0, -12.0], [0, -1 * time, 0]);
+	drawCube(gl, projectionMatrix, shaderProgramParams, buffers, [2.5, 0.0, -12.0], [0, 1 * time, 0.5 * time]);
 
 	time += 0.01;
 }

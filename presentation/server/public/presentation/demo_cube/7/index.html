@@ -16,13 +16,17 @@
     <!-- Wrapper -->
     <div id="wrapper">
         <!-- Header -->
+        
+        <!-- <header id="header">
+            <span class="avatar" style="float: left; margin-left: 40px"><img src="../../assets/beer2.jpg" alt=""></span><h1 style="text-align: left; margin-left: 170px; margin-top: 10px">1ers concepts : les Buffers &amp; Shaders</h1>
+        </header> -->
+
         <header id="header">
             <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
             <h1>1ers concepts : les Buffers & Shaders</h1>
         </header>
         <!-- Main -->
         <section id="content">
-
             <div class="column-left">
                 <canvas id="scene" width="640px" height="640px" style="background: black">
                     It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
@@ -44,15 +48,40 @@
                 </div>
             </div>
             <div class="column-right">
-                <h2>4 étapes principales :</h2>
-                <ol>
-                    <li>Initier le contexte WebGL</li>
-                    <li>Définir les buffers & les matrices (CPU)</li>
-                    <li>Calculer la position des vertices (Vertex shader, GPU)</li>
-                    <li>Calculer la couleur des fragments (Fragment shader, GPU)</li>
-                </ol>
-                <br/>
-                <img src="../../assets/gl-pipeline.png" width="100%">
+                <h2>But... Wait ! Is it automagic ?</h2>
+                
+                <h3>&nbsp; Non, il faut binder les Buffers et les Matrices aux Shaders avant l'appel à <span style="background-color: black; border-radius: 5px; font-family: 'Courier New', monospace; line-height: 14px; color: white; padding: 8px 5px 5px 5px">gl.drawElements</span></h3>
+
+                <h3>1. Composer le programme</h3>
+                <pre class="prettyprint lang-js" style="margin-top:0">
+    let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, vertexShaderSource);
+    gl.compileShader(vertexShader);
+    ...
+    let program = gl.createProgram();
+    gl.attachShader(program, vertexShaderSource);
+    gl.attachShader(program, fragmentShaderSource);
+    gl.linkProgram(program);</pre>
+                
+                <h3>2. Indiquer à WebGL comment lire les Buffers</h3>
+                <pre class="prettyprint lang-js" style="margin-top:0">
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionsBuffer);
+    gl.vertexAttribPointer(
+        0,          // index of input location
+        3,          // size
+        gl.FLOAT,   // type
+        false,      // normalized
+        0,          // stride (jump to do between reads)
+        0           // offset (starting point)
+    );
+    gl.enableVertexAttribArray(0);</pre>            
+
+                <h3>3. Setter les Matrices dans les Shaders</h3>
+                <pre class="prettyprint lang-js" style="margin-top:0">
+    gl.uniformMatrix4fv(
+        gl.getUniformLocation(program, 'uProjectionMatrix'),    // where to push my matrix
+        false,                                                  // transpose
+        projectionMatrix);                                      // the matrix I want to push</pre>
             </div>
         </section>
     </div>
@@ -89,7 +118,7 @@
     <script src="../../js/init.js"></script>
     <script src="../gl-matrix.js"></script>
     <script src="../zenibar.js"></script>
-
+        
     <script>
         document.addEventListener("keydown", navigation, false);
         function navigation(event) {

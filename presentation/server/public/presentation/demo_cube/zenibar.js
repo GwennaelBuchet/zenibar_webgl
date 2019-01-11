@@ -201,11 +201,11 @@ function drawScene(gl, shaderProgramParams, buffers) {
 	                 zNear,
 	                 zFar);
 
-	// let's move the scene to -10 along Z axis (as if we moved the camera to +10 on Z)
+	// let's move the scene to -8 along Z axis (as if we moved the camera to +10 on Z)
 	let modelViewMatrix = mat4.create();
 	mat4.translate(modelViewMatrix,     // destination matrix
 	               modelViewMatrix,     // matrix to translate
-	               [-0.0, 0.0, -10.0]);  // amount to translate
+	               [-0.0, 0.0, -8.0]);  // amount to translate
 
 	//let's rotate the global view
 	mat4.rotate(modelViewMatrix,    // destination matrix
