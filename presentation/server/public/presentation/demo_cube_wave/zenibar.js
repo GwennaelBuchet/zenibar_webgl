@@ -388,7 +388,7 @@ function drawMesh(elt, x, z) {
 	let worldMatrix = mat4.create();
 	{
 		//todo : calculer la distance entre le cube et celui du centre => sin de a distance (=vague depuis le centre)
-		elt.translation[1] = 1.2 * Math.sin(time + _getDistance(x, z, nbCubesPerLine / 2, nbCubesPerLine / 2));
+		elt.translation[1] = 1.2 * Math.sin(time + _getDistance(x, z, nbCubesPerLine / 1.5, nbCubesPerLine / 1.5));
 		mat4.invert(viewMatrix, camera.matrix);
 
 		mat4.multiply(worldMatrix, worldMatrix, globalSceneMatrix);
