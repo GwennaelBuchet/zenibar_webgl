@@ -187,7 +187,7 @@ function initMaterials() {
 		ks: 1.0,
 		shininess: 100,
 		ambientColor: [0.1, 0.1, 0.1],
-		diffuseColor: [0.267, 0.329, 0.415],
+		diffuseColor: [0.357, 0.608, 0.835],
 		specularColor: [1., 0., 0.],
 		programParams: {
 			globals: getGlobalsProgramParams(phongProgram),
@@ -369,7 +369,7 @@ function createBufferFromData(data) {
 }
 
 function _getDistance(x, y, xC, yC) {
-	return Math.sqrt((x + start+xC) * (x + start+xC) + (y + start+yC) * (y + start+yC));
+	return Math.sqrt((x + start + xC) * (x + start + xC) + (y + start + yC) * (y + start + yC));
 }
 
 function drawMesh(elt, x, z) {
@@ -468,7 +468,12 @@ function drawMesh(elt, x, z) {
 
 	let s = Math.sin(elt.translation[1]);
 	let c = vec3.create();
-	vec3.lerp(c, [1., 1., 1.], [0.357, 0.608, 0.835], s);
+	if (useLight) {
+		vec3.lerp(c, [1., 1., 1.], [0.357, 0.608, 0.835], s);
+	}
+	else {
+		vec3.lerp(c, [1., 1., 1.], [0.878, 0.592, 0.400], s);
+	}
 	gl.uniform3f(programParams.diffuseColor, c[0], c[1], c[2]);
 	gl.uniform1f(programParams.globals.alpha, 1.);
 
@@ -487,14 +492,20 @@ function drawMesh(elt, x, z) {
 function drawScene() {
 
 	// Clear the color buffer
-	gl.clearColor(1.0, 1.0, 1.0, 1.0);
+	if (useLight) {
+		gl.clearColor(1.0, 1.0, 1.0, 1.0);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+	}
+	else {
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.blendFunc(gl.ONE, gl.ONE);
+	}
 	gl.clearDepth(1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
 
 	gl.depthMask(true);
 	gl.enable(gl.BLEND);
-	//gl.blendFunc(gl.ONE, gl.ONE);
 
 	gl.cullFace(gl.FRONT);
 
