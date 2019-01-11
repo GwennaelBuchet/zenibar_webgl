@@ -19,14 +19,14 @@
     <!-- Header -->
     <header id="header">
         <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-        <h1>Ajout d'un peu d'animation</h1>
+        <h1>Wave of cubes</h1>
     </header>
 
 
-    <section id="content">
+    <section id="content_center">
 
         <div class="column-left">
-            <canvas id="scene" width="640px" height="480px" style="background: black">
+            <canvas id="scene" width="800px" height="600px" style="background: black">
                 It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
                 It's time to come back to the present days... :(
             </canvas>
@@ -35,19 +35,6 @@
                 <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
                 <h3>It's time to come back to the present days...</h3>
             </div>
-            <h2>
-                1er cube fixe et sans éclairage : 300 lignes de code 
-                <img src="../../assets/emoji-goutte-de-sueur.png" width="30px" height="30px"/>
-            </h2>
-            <br/>
-            <div class="company-logo">
-                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
-                <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
-                <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
-            </div>
-        </div>
-        <div class="column-right">
-
         </div>
     </section>
 
@@ -119,7 +106,7 @@ void main()
                         uKs * specular * uSpecularColor, uAlpha);
     }
     else {
-        outColor = vec4(texelColor, uAlpha);
+        outColor = 1.-vec4(texelColor, uAlpha);
     }
 }
 
