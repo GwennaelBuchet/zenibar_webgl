@@ -31,12 +31,16 @@ const pages = [
 	"/zenibar/index.html",
 	"/archibar/index.html",
 	"/bonsoir/index.html",
-	"/demo_cube_0/index.html",
-	"/demo_cube_1/index.html",
-	"/demo_cube_2/index.html",
-	"/demo_cube_3/index.html",
+	"/demo_cube/0/index.html", // les 4 étapes principales
+	"/demo_cube/1/index.html", // Initialiser le context WebGL2
+	"/demo_cube/2/index.html", // Remplir le buffer des positions
+	"/demo_cube/3/index.html", // Remplir le buffer des indices + Afficher
+	"/demo_cube/4/index.html", // Matrice de Projection et de Vue
+	"/demo_cube/5/index.html", // Calculate Vertices Position
+	"/demo_cube/6/index.html", // Calculate Fragments Position
 	"/demo_cube_anime/index.html",
-
+	"/demo_cube_wave/index.html",
+	"/accueil/index.html", // <== For the last slide /!\ Take care: that makes a loop /!\
 ];
 const currentPage = window.location.pathname;
 const currentPageIndex = pages.indexOf(currentPage);

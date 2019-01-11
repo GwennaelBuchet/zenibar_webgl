@@ -17,9 +17,9 @@
 <div id="wrapper">
 
     <!-- Header -->
-    <header id="header" onclick="nextPage()">
+    <header id="header">
         <span class="avatar_accueil"><img src="../../assets/beer2.jpg" alt=""/></span>
-        <h1>Welcome to Zenibar</h1>
+        <h1 style="font-size: 2em">Welcome to Zenibar</h1>
         <ul class="icons">
             <li><a href="#" class="icon style2 fa-beer"><span class="label">Beer</span></a></li>
             <li><a href="#" class="icon fa-long-arrow-right"><span class="label"></span></a></li>
@@ -48,12 +48,12 @@
     <footer id="footer-bonsoir">
 
         <div id="footer-bonsoir-left">
-            <img src="../../assets/gwen.png">
+            <img src="../../assets/gwen.png" height="100px">
         </div>
 
         <div id="footer-bonsoir-center">
             <div class="company-logo">
-                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk" onclick="previousPage()"></div>
+                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
                 <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
             </div>
             <p>&copy; Zenika 2019. All rights reserved.
@@ -61,11 +61,9 @@
         </div>
 
         <div id="footer-bonsoir-right">
-            <img src="../../assets/logan.png">
+            <img src="../../assets/logan.png" height="100px">
         </div>
-
     </footer>
-
 </div>
 
 
@@ -82,9 +80,6 @@ void main() {
   gl_Position = vec4(aVertexPosition, 1.0);
   //gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 }
-
-
-
 </script>
 
 <script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
@@ -101,10 +96,6 @@ void main() {
   vec4 t = uViewDirectionProjectionInverse * vVertexPosition;
   outColor = texture(uSampler, normalize(t.xyz / t.w));
 }
-
-
-
-
 </script>
 
 
@@ -128,10 +119,6 @@ void main() {
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
-
-
-
-
 </script>
 
 <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
@@ -155,14 +142,9 @@ void main() {
   outColor = texture(uSampler, direction);
   outColor.a = uAlpha;
 }
-
-
-
-
 </script>
 
 <script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
-
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 
@@ -202,10 +184,6 @@ void main() {
 
 	gl_Position = uProjectionMatrix * vertex;
 }
-
-
-
-
 </script>
 
 <script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
@@ -228,15 +206,10 @@ void main(void)
 	outColor = mix(refractionColor, reflectionColor, vFresnel);
 	outColor.a = uAlpha;
 }
-
-
-
-
 </script>
 
 
 <script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
-
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 layout(location = 2) in vec2 aTextureCoord;
@@ -258,9 +231,6 @@ void main()
 
     vTextureCoord = aTextureCoord;
 }
-
-
-
 </script>
 
 <script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
@@ -318,14 +288,9 @@ void main()
         outColor = vec4(texelColor, uAlpha);
     }
 }
-
-
-
-
 </script>
 
 <script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
-
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 layout(location = 2) in vec2 aTextureCoord;
@@ -347,10 +312,6 @@ void main()
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
-
-
-
-
 </script>
 
 <script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
@@ -400,10 +361,6 @@ void main()
 
     outColor = vec4(color, uAlpha);
 }
-
-
-
-
 </script>
 
 <script id="background-vshader" type="x-shader/x-vertex">#version 300 es
@@ -421,10 +378,6 @@ void main(void) {
   gl_Position = uProjectionMatrix  * vec4(aVertexPosition, 1.0);
   vTextureCoord = aTextureCoord;
 }
-
-
-
-
 </script>
 
 <script id="background-fshader" type="x-shader/x-fragment">#version 300 es
@@ -439,10 +392,6 @@ out vec4 outColor;
 void main(void) {
     outColor = texture(uSampler, vTextureCoord);
 }
-
-
-
-
 </script>
 
 <script src="../../js/init.js"></script>
@@ -451,6 +400,16 @@ void main(void) {
 <script src="webgl-obj-loader.js"></script>
 <script src="zenibar.js"></script>
 
+<script>
+    document.addEventListener("keydown", navigation, false);
+    function navigation(event) {
+        if (event.key.toUpperCase() === "ARROWRIGHT") {
+            nextPage();
+        } else if (event.key.toUpperCase() === "ARROWLEFT") {
+            previousPage();
+        }
+    }
+</script>
 
 </body>
 </html>

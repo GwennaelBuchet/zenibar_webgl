@@ -1863,23 +1863,21 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 }
 
 h1 {
-    font-size: 1.75em;
+    font-size: 3em;
 }
 
 @media screen and (max-width: 980px) {
 
     h1 {
-        font-size: 1.5em;
+        font-size: 2.5em;
     }
 
 }
 
 @media screen and (max-width: 736px) {
-
     h1 {
-        font-size: 1.25em;
+        font-size: 2.em;
     }
-
 }
 
 h2 {
@@ -2961,6 +2959,7 @@ body.is-covered #wrapper {
 
 #header h1 {
     color: rgba(255, 255, 255, 0.65);
+    font-weight: bold;
 }
 
 #header .avatar {
@@ -2994,11 +2993,9 @@ body.is-covered #wrapper {
 }
 
 @media screen and (max-width: 1280px) {
-
     #header {
-        padding: 4em 0 2em 0;
+        padding: 2em 0 2em 0;
     }
-
 }
 
 
@@ -3042,7 +3039,7 @@ body.is-covered #wrapper {
 
 .company-logo {
     width: 100%;
-    margin-top: .5rem;
+    margin-top: 1.0rem;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -ms-flex-direction: column;

@@ -12,27 +12,32 @@
     <link rel="stylesheet" href="../../assets/main.css"/>
 </head>
 <body style="background:#404040">
+    <!-- Wrapper -->
+    <div id="wrapper">
 
-<!-- Wrapper -->
-<div id="wrapper">
+        <!-- Header -->
+        <header id="header">
+            <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
+            <h1>1 décapsuleur, 1 Raspberry Pi, 1 serveur, des animations</h1>
+        </header>
 
-    <!-- Header -->
-    <header id="header" onclick="nextPage()">
-        <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-        <h1>1 décapsuleur, 1 Raspberry Pi, 1 serveur, des animations</h1>
-    </header>
-
-
-    <section id="content_center">
-        <img src="../../assets/architecture.png" alt="architecture" onclick="nextPage()" class="background-image"/>
-    </section>
-
-
-</div>
+        <section id="content_center">
+            <img src="../../assets/architecture.png" alt="architecture" class="background-image"/>
+        </section>
+    </div>
 
 
-<script src="../../js/init.js"></script>
+    <script src="../../js/init.js"></script>
 
-
+    <script>
+        document.addEventListener("keydown", navigation, false);
+        function navigation(event) {
+            if (event.key.toUpperCase() === "ARROWRIGHT") {
+                nextPage();
+            } else if (event.key.toUpperCase() === "ARROWLEFT") {
+                previousPage();
+            }
+        }
+    </script>
 </body>
 </html>
