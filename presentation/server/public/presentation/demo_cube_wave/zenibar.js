@@ -162,7 +162,7 @@ function degToRad(degrees) {
 
 function initCamera() {
 	camera = {
-		position: [0, 5, 20],
+		position: [0, 20, 45],
 		target: [0, 0, 0],
 		up: [0, 1, 0],
 
@@ -185,10 +185,10 @@ function initMaterials() {
 		ka: 1.0,
 		kd: 1.0,
 		ks: 1.0,
-		shininess: 20,
+		shininess: 100,
 		ambientColor: [0.1, 0.1, 0.1],
 		diffuseColor: [0.267, 0.329, 0.415],
-		specularColor: [1., 1., 1.],
+		specularColor: [1., 0., 0.],
 		programParams: {
 			globals: getGlobalsProgramParams(phongProgram),
 
@@ -468,7 +468,7 @@ function drawMesh(elt, x, z) {
 
 	let s = Math.sin(elt.translation[1]);
 	let c = vec3.create();
-	vec3.lerp(c, [0., 0., 0.], [0.357, 0.608, 0.835], s);
+	vec3.lerp(c, [1., 1., 1.], [0.357, 0.608, 0.835], s);
 	gl.uniform3f(programParams.diffuseColor, c[0], c[1], c[2]);
 	gl.uniform1f(programParams.globals.alpha, 1.);
 
@@ -487,7 +487,7 @@ function drawMesh(elt, x, z) {
 function drawScene() {
 
 	// Clear the color buffer
-	gl.clearColor(0.0, 0.0, 0.0, 0.0);
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
 	gl.clearDepth(1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
