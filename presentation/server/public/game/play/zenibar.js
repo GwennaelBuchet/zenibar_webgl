@@ -12,12 +12,15 @@ let textures = {};
 let materials = {};
 let scene = [];
 let camera = {};
-let beerGlass, beerMug = null;
+let beerGlass = null;
+let beerMugs = [];
+let beerMugMesh = null;
+const NB_MUGS = 10;
 
 let time = 0.0;
 let isAnimated = true;
 let useLight = true;
-let lightPos = [10.0, 10.0, 10.0];
+let lightPos = [40.0, 40.0, 40.0];
 let lightColor = [1.0, 1.0, 1.0];
 let drawMode = 4;
 
@@ -100,14 +103,12 @@ function handleMouseMove(event) {
 		if (nextX <= 10.4 && nextX >= -9.0) {
 			beerGlass.translation[0] = nextX;
 		}
-		if (nextZ <= 0.0572 && nextZ >= -2.8) {
+		if (nextZ <= 0.9 && nextZ >= -3.) {
 			beerGlass.translation[2] = nextZ;
 		}
 
-		//console.log("x = " + beerGlass.translation[0]);
-		//console.log("z = " + beerGlass.translation[2]);
-
-		if (beerMug !== null) {
+		for (let i = 0, len = beerMugs.length; i < len; i++) {
+			let beerMug = beerMugs[i];
 			let collide = isColliding(beerGlass, beerMug);
 
 			console.log(collide);
@@ -123,7 +124,7 @@ function handleMouseMove(event) {
 
 function handleMouseWheel(event) {
 
-	camera.position[0] += event.deltaX / 30.;
+	/*camera.position[0] += event.deltaX / 30.;
 	camera.position[2] += event.deltaY / 30.;
 	camera.target[0] += event.deltaX / 30.;
 	camera.target[2] += event.deltaY / 30.;
@@ -131,7 +132,7 @@ function handleMouseWheel(event) {
 	mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
 
 	event.preventDefault();
-
+*/
 	return false;
 }
 
@@ -151,6 +152,10 @@ function handleKeyDown(event) {
 	}
 	else if (event.key.toUpperCase() === "P") {
 		drawMode = gl.POINTS;
+	}
+
+	else if (event.key.toUpperCase() === " ") {
+		startAMug();
 	}
 
 	else if (event.key.toUpperCase() === "B") {
@@ -175,9 +180,9 @@ function handleKeyDown(event) {
 		scene.push(oGlass);
 
 
-		let bboxMug = applyTransfoToBbox(beerMug);
+		let bboxMug = applyTransfoToBbox(beerMugs[0]);
 		let mMug = initCubeBuffers(bboxMug.minx, bboxMug.miny, bboxMug.minz, bboxMug.maxx, bboxMug.maxy,
-		                             bboxMug.maxz);
+		                           bboxMug.maxz);
 		meshes.push(mMug);
 		let oMug = {
 			name: "bboxMug",
@@ -543,22 +548,11 @@ function loadMeshes() {
 
 	loadObjFile("assets/Mug.obj", "obj")
 		.then(result => {
-			      let beerMugMesh = createBufferFromData(result);
+			      beerMugMesh = createBufferFromData(result);
 			      meshes.push(beerMugMesh);
-			      beerMug = {
-				      name: "beerMug",
-				      mesh: beerMugMesh,
-				      translation: [5, -4.5, 0],
-				      rotation: [0, 0, 0],
-				      scale: [0.65, 0.65, 0.65],
-				      material: Object.assign({}, materials.toon)
-			      };
-			      beerMug.material.ambientColor = [0.1, 0.1, 0.1];
-			      beerMug.material.diffuseColor = [0.267, 0.329, 0.415];
-			      beerMug.material.specularColor = [1., 1., 1.];
-			      beerMug.material.useTexture = false;
-			      beerMug.material.texture = null;
-			      scene.push(beerMug);
+			      for (let i = 0; i < NB_MUGS; i++) {
+				      addRandomMug();
+			      }
 
 
 			      loadObjFile("assets/beerglass.obj", "obj")
@@ -570,7 +564,7 @@ function loadMeshes() {
 						            mesh: beerGlassMesh,
 						            translation: [0, -4.5, 0],
 						            rotation: [0, 0, 0],
-						            scale: [0.01, 0.01, 0.01],
+						            scale: [0.006, 0.006, 0.006],
 						            material: Object.assign({}, materials.reflect)
 					            };
 					            beerGlass.material.useTexture = false;
@@ -582,8 +576,45 @@ function loadMeshes() {
 				      );
 		      }, error => alert(error)
 		);
+}
 
+function addRandomMug() {
 
+	const faceColors = [
+		[0.933, 0.737, 0.204],    // yellow
+		[0.357, 0.608, 0.835],    // blue
+		[0.588, 0.722, 0.482],    // green
+		[0.878, 0.592, 0.400],    // orange
+		[0.760, 0.494, 0.815],    // violet
+		[0.267, 0.329, 0.415]     // gray
+	];
+	let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
+
+	let beerMug = {
+		name: "opener",
+		mesh: beerMugMesh,
+		material: Object.assign({}, materials.toon),
+
+		reset: function () {
+			this.translation = [-14. + Math.random(), -4.5, -3. + Math.random() * 4.];
+			this.rotation = [0, Math.random(), 0];
+			this.scale = [0.3, 0.3, 0.3];
+			this.translationSpeed = 0.04 + Math.random() / 30.;
+			this.rotationSpeed = -0.01 + Math.random() / 40.;
+			this.isAnimated = false;
+		}
+	};
+	beerMug.material.ambientColor = color; //[0.3, 0.3, 0.3];
+	beerMug.material.diffuseColor = color;
+	beerMug.material.specularColor = [1., 1., 1.];
+	beerMug.material.shininess = .7;
+	beerMug.material.useTexture = false;
+	beerMug.material.texture = null;
+	beerMug.reset();
+
+	scene.push(beerMug);
+
+	beerMugs.push(beerMug);
 }
 
 function createBufferFromData(data) {
@@ -860,6 +891,16 @@ function initCubeBuffers(minx, miny, minz, maxx, maxy, maxz) {
 	);
 }
 
+function startAMug() {
+	//find the first of the list which is not animated
+	for (let mug of beerMugs) {
+		if (!mug.isAnimated) {
+			mug.isAnimated = true;
+			break;
+		}
+	}
+}
+
 function isColliding(mesh1, mesh2) {
 	let bbox1 = applyTransfoToBbox(mesh1);
 	let bbox2 = applyTransfoToBbox(mesh2);
@@ -888,6 +929,26 @@ function isColliding(mesh1, mesh2) {
 
 function applyTransfoToBbox(mesh) {
 	let bbox = Object.assign({}, mesh.mesh.data.bbox);
+
+	/*tmp = mat4.create();
+	mat4.translate(tmp, tmp, mesh.translation);
+	mat4.rotateX(tmp, tmp, mesh.rotation[0]);
+	mat4.rotateY(tmp, tmp, mesh.rotation[1]);
+	mat4.rotateZ(tmp, tmp, mesh.rotation[2]);
+	mat4.scale(tmp, tmp, mesh.scale);
+
+	bmin = vec3.fromValues(bbox.minx, bbox.miny, bbox.minz);
+	bmax = vec3.fromValues(bbox.maxx, bbox.maxy, bbox.maxz);
+	vec3.transformMat4(bmin, bmin, tmp);
+	vec3.transformMat4(bmax, bmax, tmp);
+
+	bbox.minx = bmin[0];
+	bbox.miny = bmin[1];
+	bbox.minz = bmin[2];
+	bbox.maxx = bmax[0];
+	bbox.maxy = bmax[1];
+	bbox.maxz = bmax[2];*/
+
 
 	bbox.minx *= mesh.scale[0];
 	bbox.miny *= mesh.scale[1];
@@ -920,9 +981,6 @@ function drawMesh(elt) {
 		mat4.invert(viewMatrix, camera.matrix);
 
 		mat4.multiply(worldMatrix, worldMatrix, globalSceneMatrix);
-
-		// automatic rotation animation
-		mat4.rotate(worldMatrix, worldMatrix, time, [0, 1, 0]);
 
 		mat4.translate(worldMatrix, worldMatrix, elt.translation);
 
@@ -1048,11 +1106,22 @@ function drawScene() {
 	                 300 //zFar
 	);
 
+	for (let mug of beerMugs) {
+		if (mug.isAnimated) {
+			mug.translation[0] += mug.translationSpeed;
+			mug.rotation[1] += mug.rotationSpeed;
+
+			if (mug.translation[0] > 12.) {
+				mug.reset();
+			}
+		}
+	}
+
 	for (let elt of scene) {
 		drawMesh(elt);
 	}
 
-	//time += isAnimated ? 0.01 : 0.0;
+	time += isAnimated ? 0.01 : 0.0;
 
 	requestAnimationFrame(drawScene);
 }
