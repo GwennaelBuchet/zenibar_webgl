@@ -153,6 +153,49 @@ function handleKeyDown(event) {
 		drawMode = gl.POINTS;
 	}
 
+	else if (event.key.toUpperCase() === "B") {
+		let bboxGlass = applyTransfoToBbox(beerGlass);
+		let mGlass = initCubeBuffers(bboxGlass.minx, bboxGlass.miny, bboxGlass.minz, bboxGlass.maxx, bboxGlass.maxy,
+		                             bboxGlass.maxz);
+		meshes.push(mGlass);
+		let oGlass = {
+			name: "bboxGlass",
+			mesh: mGlass,
+			translation: [0, 0, 0],
+			rotation: [0, 0, 0],
+			scale: [1, 1, 1],
+			material: Object.assign({}, materials.phong)
+		};
+		oGlass.material.alpha = 0.5;
+		oGlass.material.ambientColor = [0.1, 0.1, 0.1];
+		oGlass.material.diffuseColor = [1, 1, 1];
+		oGlass.material.specularColor = [1., 1., 1.];
+		oGlass.material.useTexture = false;
+		oGlass.material.texture = null;
+		scene.push(oGlass);
+
+
+		let bboxMug = applyTransfoToBbox(beerMug);
+		let mMug = initCubeBuffers(bboxMug.minx, bboxMug.miny, bboxMug.minz, bboxMug.maxx, bboxMug.maxy,
+		                             bboxMug.maxz);
+		meshes.push(mMug);
+		let oMug = {
+			name: "bboxMug",
+			mesh: mMug,
+			translation: [0, 0, 0],
+			rotation: [0, 0, 0],
+			scale: [1, 1, 1],
+			material: Object.assign({}, materials.phong)
+		};
+		oMug.material.alpha = 0.5;
+		oMug.material.ambientColor = [0.1, 0.1, 0.1];
+		oMug.material.diffuseColor = [0.5, 0.5, 1];
+		oMug.material.specularColor = [1., 1., 1.];
+		oMug.material.useTexture = false;
+		oMug.material.texture = null;
+		scene.push(oMug);
+	}
+
 	else if (event.key.toUpperCase() === "ARROWUP") {
 		camera.position[1] += 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
@@ -496,7 +539,7 @@ function loadScene() {
 function loadMeshes() {
 	meshes.push(initBackgroundBuffers());
 
-	meshes.push(initCubeBuffers());
+	//meshes.push(initCubeBuffers());
 
 	loadObjFile("assets/Mug.obj", "obj")
 		.then(result => {
@@ -660,45 +703,45 @@ function initBackgroundBuffers() {
  * Initialize the buffers for the Cube we'll display
  * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
  */
-function initCubeBuffers() {
+function initCubeBuffers(minx, miny, minz, maxx, maxy, maxz) {
 
 	// Define the position for each vertex of each face
 	const positions = [
 		// Front
-		-1.0, -1.0, 1.0, //x, y, z
-		1.0, -1.0, 1.0,
-		1.0, 1.0, 1.0,
-		-1.0, 1.0, 1.0,
+		minx, miny, maxz, //x, y, z
+		maxx, miny, maxz,
+		maxx, maxy, maxz,
+		minx, maxy, maxz,
 
 		// Back
-		-1.0, -1.0, -1.0,
-		-1.0, 1.0, -1.0,
-		1.0, 1.0, -1.0,
-		1.0, -1.0, -1.0,
+		minx, miny, minz,
+		minx, maxy, minz,
+		maxx, maxy, minz,
+		maxx, miny, minz,
 
 		// Top
-		-1.0, 1.0, -1.0,
-		-1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0,
-		1.0, 1.0, -1.0,
+		minx, maxy, minz,
+		minx, maxy, maxz,
+		maxx, maxy, maxz,
+		maxx, maxy, minz,
 
 		// Bottom
-		-1.0, -1.0, -1.0,
-		1.0, -1.0, -1.0,
-		1.0, -1.0, 1.0,
-		-1.0, -1.0, 1.0,
+		minx, miny, minz,
+		maxx, miny, minz,
+		maxx, miny, maxz,
+		minx, miny, maxz,
 
 		// Right
-		1.0, -1.0, -1.0,
-		1.0, 1.0, -1.0,
-		1.0, 1.0, 1.0,
-		1.0, -1.0, 1.0,
+		maxx, miny, minz,
+		maxx, maxy, minz,
+		maxx, maxy, maxz,
+		maxx, miny, maxz,
 
 		// Left
-		-1.0, -1.0, -1.0,
-		-1.0, -1.0, 1.0,
-		-1.0, 1.0, 1.0,
-		-1.0, 1.0, -1.0
+		minx, miny, minz,
+		minx, miny, maxz,
+		minx, maxy, maxz,
+		minx, maxy, minz
 	];
 
 	// Texture coordinates
@@ -804,7 +847,15 @@ function initCubeBuffers() {
 		                            textures: textureCoordinates,
 		                            colors: colors,
 		                            vertexNormals: normals,
-		                            indices: indices
+		                            indices: indices,
+		                            bbox: {
+			                            minx: minx,
+			                            miny: miny,
+			                            minz: minz,
+			                            maxx: maxx,
+			                            maxy: maxy,
+			                            maxz: maxz
+		                            }
 	                            }
 	);
 }
@@ -812,6 +863,7 @@ function initCubeBuffers() {
 function isColliding(mesh1, mesh2) {
 	let bbox1 = applyTransfoToBbox(mesh1);
 	let bbox2 = applyTransfoToBbox(mesh2);
+
 	let sizeX1 = bbox1.maxx - bbox1.minx;
 	let sizeY1 = bbox1.maxy - bbox1.miny;
 	let sizeZ1 = bbox1.maxz - bbox1.minz;
@@ -820,11 +872,11 @@ function isColliding(mesh1, mesh2) {
 	let sizeZ2 = bbox2.maxz - bbox2.minz;
 
 	//check the X axis
-	if (Math.abs(bbox1.minx - bbox2.minx) < sizeX1 + sizeX2) {
+	if (Math.abs(bbox1.minx - bbox2.minx) < sizeX1) {
 		//check the Y axis
-		if (Math.abs(bbox1.miny - bbox2.miny) < sizeY1 + sizeY2) {
+		if (Math.abs(bbox1.miny - bbox2.miny) < sizeY1) {
 			//check the Z axis
-			if (Math.abs(bbox1.minz - bbox2.minz) < sizeZ1 + sizeZ2) {
+			if (Math.abs(bbox1.minz - bbox2.minz) < sizeZ1) {
 				return true;
 			}
 		}
@@ -835,7 +887,7 @@ function isColliding(mesh1, mesh2) {
 }
 
 function applyTransfoToBbox(mesh) {
-	let bbox = Object.assign({}, mesh.bbox);
+	let bbox = Object.assign({}, mesh.mesh.data.bbox);
 
 	bbox.minx *= mesh.scale[0];
 	bbox.miny *= mesh.scale[1];
@@ -849,6 +901,7 @@ function applyTransfoToBbox(mesh) {
 	bbox.minz += mesh.translation[2];
 	bbox.maxx += mesh.translation[0];
 	bbox.maxy += mesh.translation[1];
+	bbox.maxz += mesh.translation[2];
 
 	return bbox;
 }
