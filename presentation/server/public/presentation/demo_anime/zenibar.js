@@ -1,7 +1,11 @@
+let drawMode = 4;
+let isAnimated = true;
+let gl;
+
 function main() {
 	const canvas = document.getElementById("scene");
 
-	const gl = canvas.getContext("webgl2");
+	gl = canvas.getContext("webgl2");
 	if (!gl) {
 		canvas.style.display = "none";
 		document.getElementById("noContextLayer").style.display = "block";
@@ -33,8 +37,19 @@ function main() {
 	}
 
 	requestAnimationFrame(render);
+
+	document.addEventListener("keydown", handleKeyDown, true);
 }
 
+function handleKeyDown(event) {
+	if (event.key.toUpperCase() === "W") {
+		drawMode = gl.LINES;
+	} else if (event.key.toUpperCase() === "T") {
+		drawMode = gl.TRIANGLES;
+	} else if (event.key.toUpperCase() === "P") {
+		drawMode = gl.POINTS;
+	}
+}
 
 /**
  * Initialize the buffers for the Cube we'll display
@@ -180,7 +195,7 @@ function drawScene(gl, shaderProgramParams, buffers) {
 	drawCube(gl, projectionMatrix, shaderProgramParams, buffers, [-2.5, 0.0, -12.0], [0, -1 * time, 0]);
 	drawCube(gl, projectionMatrix, shaderProgramParams, buffers, [2.5, 0.0, -12.0], [0, 1 * time, 0.5 * time]);
 
-	time += 0.01;
+	time += isAnimated ? 0.01 : 0.00;
 }
 
 function drawCube(gl, projectionMatrix, shaderProgramParams, buffers, translation, rotation) {
@@ -245,7 +260,7 @@ function drawCube(gl, projectionMatrix, shaderProgramParams, buffers, translatio
 		modelViewMatrix);
 
 	// Let's render
-	gl.drawElements(gl.TRIANGLES,
+	gl.drawElements(drawMode,
 	                36, // count (number of vertices)
 	                gl.UNSIGNED_SHORT, // type
 	                0 // offset

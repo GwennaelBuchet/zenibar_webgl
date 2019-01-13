@@ -38,8 +38,8 @@ const pages = [
 	"/demo_cube/4/index.html", // Matrice de Projection et de Vue
 	"/demo_cube/5/index.html", // Calculate Vertices Position
 	"/demo_cube/6/index.html", // Calculate Fragments Position
-	"/demo_cube/7/index.html", // Binding Buffers to Shaders
-	"/demo_cube_anime/index.html",
+	"/demo_anime/0/index.html",
+	"/demo_anime/1/index.html",
 	"/demo_cube_wave/index.html",
 	"/accueil/index.html", // <== For the last slide /!\ Take care: that makes a loop /!\
 ];

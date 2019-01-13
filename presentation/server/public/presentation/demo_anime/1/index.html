@@ -34,35 +34,34 @@
                 <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
                 <h3>It's time to come back to the present days...</h3>
             </div>
-            <h2>1er cube fixe et sans éclairage : 300 lignes de code <img src="../../assets/emoji-goutte-de-sueur.png"
-                                                                          width="30px" height="30px"/></h2>
+            <h2>&nbsp;</h2>
             <br/>
-            <div class="company-logo">
+            <div class="company-logo" style="vertical-align: bottom">
                 <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
                 <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
                 <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
             </div>
         </div>
         <div class="column-right">
-            <h2>Les concepts...</h2>
-            <p>Todo :</p>
-            <ul>
-                <li>Explication pipeline</li>
-                <li>Explication shaders</li>
-                <li>Explication buffers</li>
-                <li>Exemple de code</li>
-            </ul>
+            <h2>Les animations</h2>
 
+            <br/>
             <pre class="prettyprint lang-js">
-    const canvas = document.getElementById("scene");
+    // let's render.
+    // As it's now animated, we use the requestAnimationFrame function to smooth it up
+    var render = function(now) {
+      drawScene(gl, programInfo, buffers);
+  
+      requestAnimationFrame(render);
+    }
+  
+    requestAnimationFrame(render);</pre>
 
-    const gl = canvas.getContext("webgl2");
-    if (!gl) {
-        canvas.style.display = "none";
-        document.getElementById("noContextLayer").style.display = "block";
-    }</pre>
+            <br/>
+            <br/>
+            <br/>
+            Allez !! Fais tourner ! (Appuyer sur ' ' pour lancer l'animation)
         </div>
-
     </section>
 
     <script id="vshader-simple" type="x-shader/x-vertex">#version 300 es
@@ -75,8 +74,9 @@
         out lowp vec4 vColor;
 
         void main(void) {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-        vColor = aVertexColor;
+            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+            gl_PointSize = 10.0;
+            vColor = aVertexColor;
         }
     </script>
 
@@ -87,14 +87,14 @@
         out vec4 outColor;
 
         void main(void) {
-        outColor = vColor;
+            outColor = vColor;
         }
     </script>
 
     <script src="../../js/run-prettify.js?skin=sunburst"></script>
     <script src="../../js/init.js"></script>
-    <script src="gl-matrix.js"></script>
-    <script src="zenibar.js"></script>
+    <script src="../gl-matrix.js"></script>
+    <script src="../zenibar.js"></script>
 
     
     <script>
@@ -104,8 +104,14 @@
                 nextPage();
             } else if (event.key.toUpperCase() === "ARROWLEFT") {
                 previousPage();
+            } else if (event.key.toUpperCase() === "R") { // Rotate
+                time += 0.10;
+            } else if (event.key.toUpperCase() === " ") { // Animate
+                isAnimated = !isAnimated;
             }
         }
+
+        isAnimated = false;
     </script>
     
 </body>
