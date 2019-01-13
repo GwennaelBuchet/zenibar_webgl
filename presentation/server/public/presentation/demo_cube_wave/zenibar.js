@@ -122,34 +122,21 @@ function handleMouseWheel(event) {
 }
 
 function handleKeyDown(event) {
-
-	//console.log(event.key);
-
 	if (event.key.toUpperCase() === "L") {
 		useLight = !useLight;
-	}
-
-	else if (event.key.toUpperCase() === "W") {
+	} else if (event.key.toUpperCase() === "W") {
 		drawMode = gl.LINES;
-	}
-	else if (event.key.toUpperCase() === "T") {
+	} else if (event.key.toUpperCase() === "T") {
 		drawMode = gl.TRIANGLES;
-	}
-	else if (event.key.toUpperCase() === "P") {
+	} else if (event.key.toUpperCase() === "P") {
 		drawMode = gl.POINTS;
-	}
-
-	else if (event.key.toUpperCase() === "ARROWUP") {
+	} else if (event.key.toUpperCase() === "ARROWUP") {
 		camera.position[1] += 0.5; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
-
-	}
-	else if (event.key.toUpperCase() === "ARROWDOWN") {
+	} else if (event.key.toUpperCase() === "ARROWDOWN") {
 		camera.position[1] -= 0.5; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
-	}
-
-	else if (event.key === " ") {
+	} else if (event.key === " ") {
 		isAnimated = !isAnimated;
 	}
 
