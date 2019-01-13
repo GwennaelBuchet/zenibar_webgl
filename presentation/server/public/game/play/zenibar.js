@@ -107,13 +107,6 @@ function handleMouseMove(event) {
 			beerGlass.translation[2] = nextZ;
 		}
 
-		for (let i = 0, len = beerMugs.length; i < len; i++) {
-			let beerMug = beerMugs[i];
-			let collide = isColliding(beerGlass, beerMug);
-
-			console.log(collide);
-		}
-
 	}
 
 	lastMouseX = newX;
@@ -154,51 +147,12 @@ function handleKeyDown(event) {
 		drawMode = gl.POINTS;
 	}
 
-	else if (event.key.toUpperCase() === " ") {
+	else if (event.key.toUpperCase() === "M") {
 		startAMug();
 	}
 
 	else if (event.key.toUpperCase() === "B") {
-		let bboxGlass = applyTransfoToBbox(beerGlass);
-		let mGlass = initCubeBuffers(bboxGlass.minx, bboxGlass.miny, bboxGlass.minz, bboxGlass.maxx, bboxGlass.maxy,
-		                             bboxGlass.maxz);
-		meshes.push(mGlass);
-		let oGlass = {
-			name: "bboxGlass",
-			mesh: mGlass,
-			translation: [0, 0, 0],
-			rotation: [0, 0, 0],
-			scale: [1, 1, 1],
-			material: Object.assign({}, materials.phong)
-		};
-		oGlass.material.alpha = 0.5;
-		oGlass.material.ambientColor = [0.1, 0.1, 0.1];
-		oGlass.material.diffuseColor = [1, 1, 1];
-		oGlass.material.specularColor = [1., 1., 1.];
-		oGlass.material.useTexture = false;
-		oGlass.material.texture = null;
-		scene.push(oGlass);
-
-
-		let bboxMug = applyTransfoToBbox(beerMugs[0]);
-		let mMug = initCubeBuffers(bboxMug.minx, bboxMug.miny, bboxMug.minz, bboxMug.maxx, bboxMug.maxy,
-		                           bboxMug.maxz);
-		meshes.push(mMug);
-		let oMug = {
-			name: "bboxMug",
-			mesh: mMug,
-			translation: [0, 0, 0],
-			rotation: [0, 0, 0],
-			scale: [1, 1, 1],
-			material: Object.assign({}, materials.phong)
-		};
-		oMug.material.alpha = 0.5;
-		oMug.material.ambientColor = [0.1, 0.1, 0.1];
-		oMug.material.diffuseColor = [0.5, 0.5, 1];
-		oMug.material.specularColor = [1., 1., 1.];
-		oMug.material.useTexture = false;
-		oMug.material.texture = null;
-		scene.push(oMug);
+		displayBBox(beerGlass);
 	}
 
 	else if (event.key.toUpperCase() === "ARROWUP") {
@@ -891,6 +845,28 @@ function initCubeBuffers(minx, miny, minz, maxx, maxy, maxz) {
 	);
 }
 
+function displayBBox(mesh) {
+	let bboxGlass = applyTransfoToBbox(mesh);
+	let mGlass = initCubeBuffers(bboxGlass.minx, bboxGlass.miny, bboxGlass.minz, bboxGlass.maxx, bboxGlass.maxy,
+	                             bboxGlass.maxz);
+	meshes.push(mGlass);
+	let oGlass = {
+		name: "bboxGlass",
+		mesh: mGlass,
+		translation: [0, 0, 0],
+		rotation: [0, 0, 0],
+		scale: [1, 1, 1],
+		material: Object.assign({}, materials.phong)
+	};
+	oGlass.material.alpha = 0.5;
+	oGlass.material.ambientColor = [0.1, 0.1, 0.1];
+	oGlass.material.diffuseColor = [1, 1, 1];
+	oGlass.material.specularColor = [1., 1., 1.];
+	oGlass.material.useTexture = false;
+	oGlass.material.texture = null;
+	scene.push(oGlass);
+}
+
 function startAMug() {
 	//find the first of the list which is not animated
 	for (let mug of beerMugs) {
@@ -908,9 +884,6 @@ function isColliding(mesh1, mesh2) {
 	let sizeX1 = bbox1.maxx - bbox1.minx;
 	let sizeY1 = bbox1.maxy - bbox1.miny;
 	let sizeZ1 = bbox1.maxz - bbox1.minz;
-	let sizeX2 = bbox2.maxx - bbox2.minx;
-	let sizeY2 = bbox2.maxy - bbox2.miny;
-	let sizeZ2 = bbox2.maxz - bbox2.minz;
 
 	//check the X axis
 	if (Math.abs(bbox1.minx - bbox2.minx) < sizeX1) {
@@ -1106,13 +1079,15 @@ function drawScene() {
 	                 300 //zFar
 	);
 
-	for (let mug of beerMugs) {
-		if (mug.isAnimated) {
-			mug.translation[0] += mug.translationSpeed;
-			mug.rotation[1] += mug.rotationSpeed;
+	if (isAnimated) {
+		for (let mug of beerMugs) {
+			if (mug.isAnimated) {
+				mug.translation[0] += mug.translationSpeed;
+				mug.rotation[1] += mug.rotationSpeed;
 
-			if (mug.translation[0] > 12.) {
-				mug.reset();
+				if (mug.translation[0] > 12.) {
+					mug.reset();
+				}
 			}
 		}
 	}
@@ -1121,7 +1096,22 @@ function drawScene() {
 		drawMesh(elt);
 	}
 
-	time += isAnimated ? 0.01 : 0.0;
+	if (beerGlass !== null) {
+		for (let i = 0, len = beerMugs.length; i < len; i++) {
+			let beerMug = beerMugs[i];
+			let collide = isColliding(beerGlass, beerMug);
+
+			if (collide) {
+				isAnimated = false;
+
+				displayBBox(beerMug);
+				displayBBox(beerGlass);
+
+			}
+		}
+	}
+
+	//time += isAnimated ? 0.01 : 0.0;
 
 	requestAnimationFrame(drawScene);
 }
