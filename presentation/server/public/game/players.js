@@ -69,13 +69,15 @@ function updateScoresList() {
 
 	let tbody = document.getElementById("table-list");
 
-	tbody.innerHTML = "";
+	if (tbody !== undefined && tbody !== null) {
+		tbody.innerHTML = "";
 
-	for (let player of players) {
-		tbody.innerHTML += "<tr>\n"
-		                   + "\t\t<td class=\"text-left\">" + player.firstname + " " + player.lastname + "</td>\n"
-		                   + "\t\t<td class=\"text-left\">" + player.score + "</td>\n"
-		                   + "</tr>";
+		for (let player of players) {
+			tbody.innerHTML += "<tr>\n"
+			                   + "\t\t<td class=\"text-left\">" + player.firstname + " " + player.lastname + "</td>\n"
+			                   + "\t\t<td class=\"text-left\">" + player.score + "</td>\n"
+			                   + "</tr>";
+		}
 	}
 }
 function loadParams() {
