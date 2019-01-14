@@ -19,7 +19,8 @@ const NB_MUGS = 10;
 
 let score = 0;
 let globalAcceleration = 0.;
-let accelerationFactor = 0.04;
+let accelerationFactor = 0.01;
+let maxSpeed = 0.3;
 
 let time = 0.0;
 let isAnimated = true;
@@ -563,8 +564,8 @@ function loadMug() {
 			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
 			this.rotation = [0, Math.random(), 0];
 			this.scale = [0.25, 0.25, 0.25];
-			this.translationSpeed = 0.04 + Math.random() / 30. + globalAcceleration;
-			this.rotationSpeed = -0.01 + Math.random() / 40. + globalAcceleration;
+			this.translationSpeed = Math.min(0.04 + Math.random() / 30. + globalAcceleration, maxSpeed);
+			this.rotationSpeed = Math.min(-0.01 + Math.random() / 40. + globalAcceleration, maxSpeed);
 			this.isAnimated = false;
 
 			let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
