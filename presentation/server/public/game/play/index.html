@@ -141,7 +141,7 @@
 <div id="wrapper">
     <!-- Header -->
     <header id="header" style="text-align: center">
-        <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
+        <span class="avatar"><img id="playerPhoto" src="../../assets/beer2.jpg" alt=""/></span>
         <h1 id="score">Score: 0</h1>
     </header>
 
@@ -175,7 +175,7 @@
                 </div>
             </div>
 
-            <div class="cube flip-to-bottom" onclick="overlayOff(); location.href='../accueil/index.html'">
+            <div class="cube flip-to-bottom" onclick="overlayOff(); location.href='../accueil/index.html?id='+idPlayer">
                 <div class="default-state">
                     <span>No thx.</span>
                 </div>
@@ -609,6 +609,7 @@ void main(void) {
 
 </script>
 
+<script src="../players.js"></script>
 <script src="gl-matrix.js"></script>
 <!--script src="objLoader.js"></script-->
 <script src="webgl-obj-loader.js"></script>

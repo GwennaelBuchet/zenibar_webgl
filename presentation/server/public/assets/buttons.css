@@ -1,0 +1,91 @@
+.cube {
+    width: 400px;
+    height: 100px;
+    -webkit-transition: all 250ms ease;
+    -moz-transition: all 250ms ease;
+    -o-transition: all 250ms ease;
+    transition: all 250ms ease;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+    -o-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+/* The two faces of the cube */
+.default-state,
+.active-state {
+    height: 100px;
+}
+
+/* Position the faces */
+.default-state {
+    -webkit-transform: translateZ(50px);
+    -moz-transform: translateZ(50px);
+    -ms-transform: translateZ(50px);
+    -o-transform: translateZ(50px);
+    transform: translateZ(50px);
+}
+
+.flip-to-top .active-state {
+    -webkit-transform: rotateX(90deg) translateZ(150px);
+    -moz-transform: rotateX(90deg) translateZ(150px);
+    -ms-transform: rotateX(90deg) translateZ(150px);
+    -o-transform: rotateX(90deg) translateZ(150px);
+    transform: rotateX(90deg) translateZ(150px);
+}
+
+.flip-to-bottom .active-state {
+    -webkit-transform: rotateX(-90deg) translateZ(-50px);
+    -moz-transform: rotateX(-90deg) translateZ(-50px);
+    -ms-transform: rotateX(-90deg) translateZ(-50px);
+    -o-transform: rotateX(-90deg) translateZ(-50px);
+    transform: rotateX(-90deg) translateZ(-50px);
+}
+
+/* Rotate the cube */
+.cube.flip-to-top:hover {
+    -webkit-transform: rotateX(-89deg);
+    -moz-transform: rotateX(-89deg);
+    -ms-transform: rotateX(-89deg);
+    -o-transform: rotateX(-89deg);
+    transform: rotateX(-89deg);
+}
+
+.cube.flip-to-bottom:hover {
+    -webkit-transform: rotateX(89deg);
+    -moz-transform: rotateX(89deg);
+    -ms-transform: rotateX(89deg);
+    -o-transform: rotateX(89deg);
+    transform: rotateX(89deg);
+}
+
+.cube {
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+.default-state,
+.active-state {
+    background: #2f2e2d;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 100px;
+    -webkit-transition: background 250ms ease;
+    -moz-transition: background 250ms ease;
+    -o-transition: background 250ms ease;
+    transition: background 250ms ease;
+}
+
+.cube:hover .default-state {
+    background: #391c16;
+}
+
+.drink {
+    background: #465991;
+}
+.uber {
+    background: #913e34;
+}

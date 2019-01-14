@@ -1130,7 +1130,8 @@ function drawScene() {
 
 				overlayOn();
 
-				players[idPlayer].score = Math.max(players[idPlayer].score, score);
+				setPlayerScore(score);
+				savePlayersData();
 
 				//displayBBox(beerMug);
 				//displayBBox(beerGlass);

@@ -73,4 +73,4 @@ function resize(canvas) {
 	}
 }
 
-window.addEventListener('load', loadWS,false);
+window.addEventListener('load', loadWS, false);

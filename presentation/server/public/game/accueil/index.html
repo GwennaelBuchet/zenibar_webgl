@@ -9,8 +9,103 @@
     <title>Welcome to Zenibar !</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="../../assets/main.css"/>
-    <link rel="stylesheet" href="../../assets/table.css"/>
+    <link rel="stylesheet" type="text/css" href="../../assets/main.css"/>
+    <link rel="stylesheet" type="text/css" href="../../assets/table.css"/>
+    <link rel="stylesheet" type="text/css" href="../../assets/sunburst.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/buttons.css"/>
+
+    <style>
+
+        .cube {
+            width: 500px;
+            height: 80px;
+            -webkit-transition: all 250ms ease;
+            -moz-transition: all 250ms ease;
+            -o-transition: all 250ms ease;
+            transition: all 250ms ease;
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+            -ms-transform-style: preserve-3d;
+            -o-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        /* The two faces of the cube */
+        .default-state,
+        .active-state {
+            height: 80px;
+        }
+
+        /* Position the faces */
+        .default-state {
+            -webkit-transform: translateZ(40px);
+            -moz-transform: translateZ(40px);
+            -ms-transform: translateZ(40px);
+            -o-transform: translateZ(40px);
+            transform: translateZ(40px);
+        }
+
+        .flip-to-top .active-state {
+            -webkit-transform: rotateX(90deg) translateZ(120px);
+            -moz-transform: rotateX(90deg) translateZ(120px);
+            -ms-transform: rotateX(90deg) translateZ(120px);
+            -o-transform: rotateX(90deg) translateZ(120px);
+            transform: rotateX(90deg) translateZ(120px);
+        }
+
+        .flip-to-bottom .active-state {
+            -webkit-transform: rotateX(-90deg) translateZ(-40px);
+            -moz-transform: rotateX(-90deg) translateZ(-40px);
+            -ms-transform: rotateX(-90deg) translateZ(-40px);
+            -o-transform: rotateX(-90deg) translateZ(-40px);
+            transform: rotateX(-90deg) translateZ(-40px);
+        }
+
+        /* Rotate the cube */
+        .cube.flip-to-top:hover {
+            -webkit-transform: rotateX(-89deg);
+            -moz-transform: rotateX(-89deg);
+            -ms-transform: rotateX(-89deg);
+            -o-transform: rotateX(-89deg);
+            transform: rotateX(-89deg);
+        }
+
+        .cube.flip-to-bottom:hover {
+            -webkit-transform: rotateX(89deg);
+            -moz-transform: rotateX(89deg);
+            -ms-transform: rotateX(89deg);
+            -o-transform: rotateX(89deg);
+            transform: rotateX(89deg);
+        }
+
+        .cube {
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 5px;
+        }
+
+        .default-state,
+        .active-state {
+            background: #465991;
+            font-size: 1.5em;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 80px;
+            -webkit-transition: background 250ms ease;
+            -moz-transition: background 250ms ease;
+            -o-transition: background 250ms ease;
+            transition: background 250ms ease;
+        }
+
+        .cube:hover .default-state {
+            background: #391c16;
+        }
+
+        .drink {
+            background: #2b3b4a;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -22,7 +117,15 @@
         <span class="avatar_accueil">
             <img id="playerPhoto" src="../../assets/beer2.jpg" alt=""/>
         </span>
-        <h1 class="smaller"><i>"Avoid Mugs (that's not beer...)"</i> game</h1>
+        <div class="cube flip-to-top" onclick="window.location.assign('../play/index.html?id='+idPlayer)">
+            <div class="default-state">
+                <span><i>"Avoid Mugs (it's not beer...)"</i></span>
+            </div>
+            <div class="active-state drink">
+                <span id="playbtn">Play</span>
+            </div>
+        </div>
+
         <ul class="icons">
             <li><a href="#" class="icon style2 fa-gamepad"><span class="label">Gamepad</span></a></li>
             <li><a href="#" class="icon fa-long-arrow-right"><span class="label"></span></a></li>
@@ -50,14 +153,11 @@
         </section>
 
         <div id="column-right">
-            <div class="table-title">
-                <h3>Player's Score</h3>
-            </div>
             <table class="table-fill">
                 <thead>
                 <tr>
                     <th class="text-left">Player</th>
-                    <th class="text-left">Score</th>
+                    <th class="text-left">Best score</th>
                 </tr>
                 </thead>
                 <tbody class="table-hover" id="table-list">
