@@ -1,23 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<!--
+	Visualize by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-
-    <link rel="stylesheet" type="text/css" href="game.css">
-
+    <title>Welcome to Zenibar !</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="../../assets/main.css"/>
 </head>
 <body>
 
-<canvas id="scene" width="1280" height="900">
-    It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
-    It's time to come back to the present days... :(
-</canvas>
+<!-- Wrapper -->
+<div id="wrapper">
 
-<div id="noContextLayer" style="display: none">
-    <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
-    <h3>It's time to come back to the present days...</h3>
+    <!-- Header -->
+    <header id="header">
+        <span class="avatar_accueil"><img src="../../assets/beer2.jpg" alt=""/></span>
+        <h1 class="smaller"><i>"Avoid Mugs (that's not beer...)"</i> game</h1>
+        <ul class="icons">
+            <li><a href="#" class="icon style2 fa-gamepad"><span class="label">Gamepad</span></a></li>
+            <li><a href="#" class="icon fa-long-arrow-right"><span class="label"></span></a></li>
+            <li><a href="#" class="icon style2 fa-beer"><span class="label">Beer</span></a></li>
+            <li><a href="#" class="icon fa-long-arrow-left"><span class="label"></span></a></li>
+            <li><a href="#" class="icon style2 fa-gamepad"><span class="label">Gamepad</span></a></li>
+        </ul>
+
+    </header>
+
+    <!-- Main -->
+    <section id="content_center">
+
+        <canvas id="scene" width="640" height="480">
+            It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
+            It's time to come back to the present days... :(
+        </canvas>
+
+        <div id="noContextLayer" style="display: none">
+            <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
+            <h3>It's time to come back to the present days...</h3>
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer-bonsoir">
+
+        <div id="footer-bonsoir-left">
+        </div>
+
+        <div id="footer-bonsoir-center">
+            <div class="company-logo">
+                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
+                <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
+            </div>
+            <p>&copy; Zenika 2019. All rights reserved.
+            </p>
+        </div>
+
+        <div id="footer-bonsoir-right">
+        </div>
+    </footer>
 </div>
+
 
 <script id="skybox-vshader" type="x-shader/x-vertex">#version 300 es
 layout(location = 0) in vec3 aVertexPosition;
@@ -32,10 +79,6 @@ void main() {
   gl_Position = vec4(aVertexPosition, 1.0);
   //gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 }
-
-
-
-
 </script>
 
 <script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
@@ -52,11 +95,6 @@ void main() {
   vec4 t = uViewDirectionProjectionInverse * vVertexPosition;
   outColor = texture(uSampler, normalize(t.xyz / t.w));
 }
-
-
-
-
-
 </script>
 
 
@@ -65,33 +103,21 @@ void main() {
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 
-uniform mat4 uNormalMatrix, uViewMatrix, uProjectionMatrix, uWorldMatrix;
-uniform float uTime;
+uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
 
 out vec3 vWorldPosition;
 out vec3 vWorldNormal;
 
-out vec3 normalInterp;
-out vec3 vertPos;
-
 void main() {
-    vec3 pos = aVertexPosition;
+  // Multiply the position by the matrix.
+  gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 
-    // Multiply the position by the matrix.
-    gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(pos, 1.0);
+  // send the view position to the fragment shader
+  vWorldPosition = (uWorldMatrix * vec4(aVertexPosition, 1.0)).xyz;
 
-    // send the view position to the fragment shader
-    vWorldPosition = (uWorldMatrix * vec4(pos, 1.0)).xyz;
-
-    // orient the normals and pass to the fragment shader
-    vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
-
-
-    vec4 vertPos4 = uViewMatrix * vec4(aVertexPosition, 1.0);
-    vertPos = vec3(vertPos4) / vertPos4.w;
-    normalInterp = vec3(uNormalMatrix * vec4(aVertexNormal, 0.0));
+  // orient the normals and pass to the fragment shader
+  vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
-
 </script>
 
 <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
@@ -99,58 +125,25 @@ precision highp float;
 
 in vec3 vWorldPosition;
 in vec3 vWorldNormal;
-in vec3 normalInterp;
-in vec3 vertPos;
 
 uniform samplerCube uSampler;
+// The position of the camera
 uniform vec3 uCameraPosition;
-
-uniform vec3 uLightPos;
-uniform float uShininess;
-uniform float uKa;
-uniform float uKd;
-uniform float uKs;
-uniform vec3 uAmbientColor;
-uniform vec3 uDiffuseColor;
-uniform vec3 uSpecularColor;
 uniform float uAlpha;
 
 out vec4 outColor;
 
 void main() {
-    vec3 worldNormal = normalize(vWorldNormal);
-    vec3 eyeToSurfaceDir = normalize(vWorldPosition - uCameraPosition);
-    vec3 direction = reflect(eyeToSurfaceDir, worldNormal);
+  vec3 worldNormal = normalize(vWorldNormal);
+  vec3 eyeToSurfaceDir = normalize(vWorldPosition - uCameraPosition);
+  vec3 direction = reflect(eyeToSurfaceDir, worldNormal);
 
-    vec3 texelColor = texture(uSampler, direction).rgb;
-
-
-
-    vec3 N = normalize(normalInterp);
-    vec3 L = normalize(uLightPos - vertPos);
-
-    // Lambert's cosine law
-    float lambertian = max(dot(N, L), 0.0);
-    float specular = 0.0;
-    if (lambertian > 0.0) {
-        vec3 R = reflect(-L, N);      // Reflected light vector
-        vec3 V = normalize(-vertPos); // Vector to viewer
-        // Compute the specular term
-        float specAngle = max(dot(R, V), 0.0);
-        specular = pow(specAngle, uShininess);
-    }
-
-    outColor = vec4(uKa * uAmbientColor +
-                    uKd * lambertian * (texelColor) +
-                    uKs * specular * uSpecularColor, uAlpha);
-
-    outColor = vec4(texelColor, uAlpha);
+  outColor = texture(uSampler, direction) * 1.4;
+  outColor.a = uAlpha;
 }
-
 </script>
 
 <script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
-
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 
@@ -173,14 +166,14 @@ out float vFresnel;
 
 void main() {
   // Multiply the position by the matrix.
+  gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 
-
-  vec4 vertex = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+  vec4 vertex = uViewMatrix * vec4(aVertexPosition, 1.0);
 
 	vec3 incident = normalize(vec3(vertex) - uCameraPosition);
 
 	// Assume incoming normal is normalized.
-	vec3 normal = vec3(uNormalMatrix * normalize(vec4(aVertexNormal, 1.0)));
+	vec3 normal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
 
 	vRefraction = refract(incident, normal, Eta);
 	vReflection = reflect(incident, normal);
@@ -188,10 +181,8 @@ void main() {
 	// see http://en.wikipedia.org/wiki/Schlick%27s_approximation
 	vFresnel = R0 + (1.0 - R0) * pow((1.0 - dot(-incident, normal)), 5.0);
 
-    gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
-	//gl_Position = uProjectionMatrix * vertex;
+	gl_Position = uProjectionMatrix * vertex;
 }
-
 </script>
 
 <script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
@@ -211,15 +202,13 @@ void main(void)
 	vec4 refractionColor = texture(uSampler, normalize(vRefraction));
 	vec4 reflectionColor = texture(uSampler, normalize(vReflection));
 
-	outColor = mix(refractionColor, reflectionColor, 0.5);
+	outColor = mix(refractionColor, reflectionColor, vFresnel);
 	outColor.a = uAlpha;
 }
-
 </script>
 
 
 <script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
-
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 layout(location = 2) in vec2 aTextureCoord;
@@ -233,7 +222,7 @@ out vec2 vTextureCoord;
 void main()
 {
     // Multiply the position by the matrix.
-    gl_Position = uProjectionMatrix * uWorldMatrix * uViewMatrix * vec4(aVertexPosition, 1.0);
+    gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 
     vec4 vertPos4 = uViewMatrix * vec4(aVertexPosition, 1.0);
     vertPos = vec3(vertPos4) / vertPos4.w;
@@ -241,10 +230,6 @@ void main()
 
     vTextureCoord = aTextureCoord;
 }
-
-
-
-
 </script>
 
 <script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
@@ -305,7 +290,6 @@ void main()
 </script>
 
 <script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
-
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
 layout(location = 2) in vec2 aTextureCoord;
@@ -327,11 +311,6 @@ void main()
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
-
-
-
-
-
 </script>
 
 <script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
@@ -381,11 +360,6 @@ void main()
 
     outColor = vec4(color, uAlpha);
 }
-
-
-
-
-
 </script>
 
 <script id="background-vshader" type="x-shader/x-vertex">#version 300 es
@@ -403,11 +377,6 @@ void main(void) {
   gl_Position = uProjectionMatrix  * vec4(aVertexPosition, 1.0);
   vTextureCoord = aTextureCoord;
 }
-
-
-
-
-
 </script>
 
 <script id="background-fshader" type="x-shader/x-fragment">#version 300 es
@@ -422,17 +391,23 @@ out vec4 outColor;
 void main(void) {
     outColor = texture(uSampler, vTextureCoord);
 }
-
-
-
-
-
 </script>
 
-<script src="../js/init.js"></script>
-<script src="./gl-matrix.js"></script>
-<script src="./webgl-obj-loader.js"></script>
-<script src="./zenibar.js"></script>
+<script src="../../js/init.js"></script>
+<script src="gl-matrix.js"></script>
+<script src="webgl-obj-loader.js"></script>
+<script src="zenibar.js"></script>
+
+<script>
+    document.addEventListener("keydown", navigation, false);
+    function navigation(event) {
+        if (event.key.toUpperCase() === "ARROWRIGHT") {
+            nextPage();
+        } else if (event.key.toUpperCase() === "ARROWLEFT") {
+            previousPage();
+        }
+    }
+</script>
 
 </body>
 </html>

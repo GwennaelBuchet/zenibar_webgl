@@ -18,9 +18,11 @@ let beerMugMesh = null;
 const NB_MUGS = 10;
 
 let score = 0;
+let globalAcceleration = 0.;
 
 let time = 0.0;
 let isAnimated = true;
+
 let useLight = true;
 let lightPos = [40.0, 40.0, 40.0];
 let lightColor = [1.0, 1.0, 1.0];
@@ -380,14 +382,14 @@ function loadTextures() {
 
 	textures.cubemap = loadTextureCubeMap();
 
-	textures.background = loadTexture2D("assets/bar.jpg");
+	textures.background = loadTexture2D("../assets/bar.jpg");
 }
 
 function loadTextureCubeMap() {
 	let texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 
-	let texPath = "assets/bar_map/";
+	let texPath = "../assets/bar_map/";
 
 	const faceInfos = [
 		{
@@ -506,7 +508,7 @@ function loadMeshes() {
 
 	//meshes.push(initCubeBuffers());
 
-	loadObjFile("assets/Mug.obj", "obj")
+	loadObjFile("../assets/Mug.obj", "obj")
 		.then(result => {
 			      beerMugMesh = createBufferFromData(result);
 			      meshes.push(beerMugMesh);
@@ -515,7 +517,7 @@ function loadMeshes() {
 			      }
 
 
-			      loadObjFile("assets/beerglass.obj", "obj")
+			      loadObjFile("../assets/beerglass.obj", "obj")
 				      .then(result => {
 					            let beerGlassMesh = createBufferFromData(result);
 					            meshes.push(beerGlassMesh);
@@ -549,7 +551,7 @@ function loadMug() {
 		[0.760, 0.494, 0.815],    // violet
 		[0.267, 0.329, 0.415]     // gray
 	];
-	let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
+
 
 	let beerMug = {
 		name: "opener",
@@ -560,13 +562,15 @@ function loadMug() {
 			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
 			this.rotation = [0, Math.random(), 0];
 			this.scale = [0.25, 0.25, 0.25];
-			this.translationSpeed = 0.04 + Math.random() / 30.;
-			this.rotationSpeed = -0.01 + Math.random() / 40.;
+			this.translationSpeed = 0.04 + Math.random() / 30. + globalAcceleration;
+			this.rotationSpeed = -0.01 + Math.random() / 40. + globalAcceleration;
 			this.isAnimated = false;
+
+			let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
+			beerMug.material.ambientColor = color; //[0.3, 0.3, 0.3];
+			beerMug.material.diffuseColor = color;
 		}
 	};
-	beerMug.material.ambientColor = color; //[0.3, 0.3, 0.3];
-	beerMug.material.diffuseColor = color;
 	beerMug.material.specularColor = [1., 1., 1.];
 	beerMug.material.shininess = .7;
 	beerMug.material.useTexture = false;
@@ -1098,7 +1102,9 @@ function drawScene() {
 				mug.translation[0] += mug.translationSpeed;
 				mug.rotation[1] += mug.rotationSpeed;
 
-				if (mug.translation[0] > 12.) {
+				if (mug.translation[0] > 14.) {
+					globalAcceleration += 0.004;
+
 					mug.reset();
 					mug.isAnimated = true;
 

@@ -16,11 +16,11 @@ let camera = {};
 let time = 0.0;
 let isAnimated = true;
 let useLight = true;
-let lightPos = [200.0, 2000.0, -100.0];
+let lightPos = [10.0, 10.0, 10.0];
 let lightColor = [1.0, 1.0, 1.0];
 let drawMode = 4;
 
-let texPath = "assets/map_textures/winter-skyboxes/Forest/";
+let texPath = "../assets/bar_map/";
 
 let projectionMatrix = mat4.create();
 let globalSceneMatrix = mat4.create();
@@ -129,7 +129,6 @@ function handleKeyDown(event) {
 	if (event.key.toUpperCase() === "L") {
 		useLight = !useLight;
 	}
-
 	else if (event.key.toUpperCase() === "W") {
 		drawMode = gl.LINES;
 	}
@@ -139,7 +138,6 @@ function handleKeyDown(event) {
 	else if (event.key.toUpperCase() === "P") {
 		drawMode = gl.POINTS;
 	}
-
 	else if (event.key.toUpperCase() === "ARROWUP") {
 		camera.position[1] += 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
@@ -187,7 +185,7 @@ function initMaterials() {
 		ka: 1.0,
 		kd: 1.0,
 		ks: 1.0,
-		shininess: 90.,
+		shininess: 90,
 		ambientColor: [0.1, 0.1, 0.1],
 		diffuseColor: [0.267, 0.329, 0.415],
 		specularColor: [1., 1., 1.],
@@ -215,7 +213,7 @@ function initMaterials() {
 		ka: 1.0,
 		kd: 1.0,
 		ks: 1.0,
-		shininess: 250.,
+		shininess: 250,
 		ambientColor: [0.1, 0.1, 0.1],
 		diffuseColor: [0.267, 0.329, 0.415],
 		specularColor: [0.0, 0.0, 0.0],
@@ -240,22 +238,8 @@ function initMaterials() {
 		texture: textures.cubemap,
 		program: reflectProgram,
 		alpha: 1.0,
-		ka: 1.0,
-		kd: 1.0,
-		ks: 1.0,
-		shininess: 90.,
-		ambientColor: [0.1, 0.1, 0.1],
-		diffuseColor: [0.267, 0.329, 0.415],
-		specularColor: [1., 1., 1.],
 		programParams: {
-			globals: getGlobalsProgramParams(reflectProgram),
-			ka: gl.getUniformLocation(reflectProgram, "uKa"),
-			kd: gl.getUniformLocation(reflectProgram, "uKd"),
-			ks: gl.getUniformLocation(reflectProgram, "uKs"),
-			shininess: gl.getUniformLocation(reflectProgram, "uShininess"),
-			ambientColor: gl.getUniformLocation(reflectProgram, "uAmbientColor"),
-			diffuseColor: gl.getUniformLocation(reflectProgram, "uDiffuseColor"),
-			specularColor: gl.getUniformLocation(reflectProgram, "uSpecularColor")
+			globals: getGlobalsProgramParams(reflectProgram)
 		}
 	};
 
@@ -375,9 +359,6 @@ function loadTextures() {
 	textures.cubemap = loadTextureCubeMap();
 
 	textures.background = loadTexture2D(texPath + "negz.jpg");
-	textures.biere = loadTexture2D("assets/biere-mousse-carre.jpg");
-	textures.biere2 = loadTexture2D("assets/biere2.jpg");
-	textures.champagne = loadTexture2D("assets/Bottle/champ_diffuse.jpg");
 }
 
 function loadTextureCubeMap() {
@@ -503,16 +484,15 @@ function loadMeshes() {
 
 	meshes.push(initCubeBuffers());
 
-	loadObjFile("assets/Mug.obj", "obj")
+	loadObjFile("../assets/Mug.obj", "obj")
 		.then(result => {
-			      console.log("mug");
 			      let body = createBufferFromData(result);
 			      meshes.push(body);
 			      let eltBody = {
 				      name: "body",
 				      mesh: body,
-				      translation: [3, -2, 0],
-				      rotation: [0, 0, 0],
+				      translation: [-4, -2, 0],
+				      rotation: [-0.1, Math.PI, 0],
 				      scale: [1, 1, 1],
 				      material: Object.assign({}, materials.toon),
 				      objectID: 2
@@ -525,33 +505,26 @@ function loadMeshes() {
 			      scene.push(eltBody);
 
 
-			      loadObjFile("assets/beerglass.obj", "obj")
+			      loadObjFile("../assets/beerglass.obj", "obj")
 				      .then(result => {
-					            console.log("bottle");
 					            let bottle = createBufferFromData(result);
 					            meshes.push(bottle);
 					            let eltBottle = {
 						            name: "bottle",
 						            mesh: bottle,
-						            translation: [-3, -2, 0],
-						            rotation: [0, Math.PI, 0],
-						            scale: [0.02, 0.02, 0.02],
+						            translation: [4, -3.5, 0],
+						            rotation: [0.1, 0, 0],
+						            scale: [0.025, 0.025, 0.025],
 						            material: Object.assign({}, materials.reflect),
 						            objectID: 3
 					            };
 					            eltBottle.material.useTexture = false;
-					            eltBottle.material.ambientColor = [0.5, 0.5, 0.5];
-					            //eltBottle.material.diffuseColor = [0.267, 0.329, 0.415];
-					            eltBottle.material.diffuseColor = [0., 0., 0.];
-					            eltBottle.material.specularColor = [1., 1., 1.];
 					            eltBottle.material.texture = textures.cubemap;
-					            eltBottle.material.alpha = 0.6;
+					            eltBottle.material.alpha = 0.65;
 
 					            scene.push(eltBottle);
 				            }, error => alert(error)
 				      );
-
-
 		      }, error => alert(error)
 		);
 
@@ -830,6 +803,7 @@ function drawMesh(elt) {
 	// Set the shader program to use
 	gl.useProgram(elt.material.program);
 
+
 	// move object
 	let viewMatrix = mat4.create();
 	let worldMatrix = mat4.create();
@@ -839,7 +813,7 @@ function drawMesh(elt) {
 		mat4.multiply(worldMatrix, worldMatrix, globalSceneMatrix);
 
 		// automatic rotation animation
-		//mat4.rotate(worldMatrix, worldMatrix, time, [0, 1, 0]);
+		mat4.rotate(worldMatrix, worldMatrix, time, [0, 1, 0]);
 
 		mat4.translate(worldMatrix, worldMatrix, elt.translation);
 
@@ -947,7 +921,7 @@ function drawMesh(elt) {
 function drawScene() {
 
 	// Clear the color buffer
-	gl.clearColor(0.0, 0.0, 0.0, 0.0);
+	gl.clearColor(0.941, 0.941, 0.862, 1.0);
 	gl.clearDepth(1.0);
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
@@ -969,7 +943,7 @@ function drawScene() {
 		drawMesh(elt);
 	}
 
-	time += isAnimated ? 1 : 0.0;
+	time += isAnimated ? 0.01 : 0.0;
 
 	requestAnimationFrame(drawScene);
 }
