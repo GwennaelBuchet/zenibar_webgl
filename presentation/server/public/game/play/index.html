@@ -1,22 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<!--
+	Visualize by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Welcome to Zenibar !</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="../../assets/sunburst.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/main.css"/>
 </head>
 <body>
 
-<canvas id="scene" width="1280px" height="1024px" style="background: black">
-    It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
-    It's time to come back to the present days... :(
-</canvas>
+<!-- Wrapper -->
+<div id="wrapper">
+    <!-- Header -->
+    <header id="header" style="text-align: center">
+        <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
+        <h1>Let's Play</h1>
+    </header>
 
-<div id="noContextLayer" style="display: none">
-    <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
-    <h3>It's time to come back to the present days...</h3>
-</div>
 
-<script id="skybox-vshader" type="x-shader/x-vertex">#version 300 es
+    <section id="content_center">
+
+        <div class="column-left">
+            <canvas id="scene" width="1280px" height="880px" style="background: black">
+                It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
+                It's time to come back to the present days... :(
+            </canvas>
+
+            <div id="noContextLayer" style="display: none">
+                <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
+                <h3>It's time to come back to the present days...</h3>
+            </div>
+        </div>
+    </section>
+
+    <script id="skybox-vshader" type="x-shader/x-vertex">#version 300 es
 layout(location = 0) in vec3 aVertexPosition;
 
 uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
@@ -29,9 +51,11 @@ void main() {
   gl_Position = vec4(aVertexPosition, 1.0);
   //gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 }
-</script>
 
-<script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
+
+    </script>
+
+    <script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 
 in vec4 vVertexPosition;
@@ -46,10 +70,12 @@ void main() {
   outColor = texture(uSampler, normalize(t.xyz / t.w));
 }
 
-</script>
 
 
-<script id="reflect-vshader" type="x-shader/x-vertex">#version 300 es
+    </script>
+
+
+    <script id="reflect-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -70,9 +96,9 @@ void main() {
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
 
-</script>
+    </script>
 
-<script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
+    <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
 precision highp float;
 
 in vec3 vWorldPosition;
@@ -90,13 +116,14 @@ void main() {
   vec3 eyeToSurfaceDir = normalize(vWorldPosition - uCameraPosition);
   vec3 direction = reflect(eyeToSurfaceDir, worldNormal);
 
-  outColor = texture(uSampler, direction);
+  outColor = texture(uSampler, direction) * 1.7;
   outColor.a = uAlpha;
 }
 
-</script>
 
-<script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
+    </script>
+
+    <script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -138,9 +165,11 @@ void main() {
 	gl_Position = uProjectionMatrix * vertex;
 }
 
-</script>
 
-<script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
+
+    </script>
+
+    <script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
 precision highp float;
 
 uniform samplerCube uSampler;
@@ -161,10 +190,12 @@ void main(void)
 	outColor.a = uAlpha;
 }
 
-</script>
 
 
-<script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
+    </script>
+
+
+    <script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -187,9 +218,11 @@ void main()
 
     vTextureCoord = aTextureCoord;
 }
-</script>
 
-<script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
+
+    </script>
+
+    <script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 out vec4 outColor;
 
@@ -245,9 +278,11 @@ void main()
     }
 }
 
-</script>
 
-<script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
+
+    </script>
+
+    <script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -271,9 +306,11 @@ void main()
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
 
-</script>
 
-<script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
+
+    </script>
+
+    <script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 out vec4 outColor;
 
@@ -321,9 +358,11 @@ void main()
     outColor = vec4(color, uAlpha);
 }
 
-</script>
 
-<script id="background-vshader" type="x-shader/x-vertex">#version 300 es
+
+    </script>
+
+    <script id="background-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 2) in vec2 aTextureCoord;
@@ -339,9 +378,11 @@ void main(void) {
   vTextureCoord = aTextureCoord;
 }
 
-</script>
 
-<script id="background-fshader" type="x-shader/x-fragment">#version 300 es
+
+    </script>
+
+    <script id="background-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 
 in vec2 vTextureCoord;
@@ -354,12 +395,14 @@ void main(void) {
     outColor = texture(uSampler, vTextureCoord);
 }
 
-</script>
 
-<script src="gl-matrix.js"></script>
-<!--script src="objLoader.js"></script-->
-<script src="webgl-obj-loader.js"></script>
-<script src="zenibar.js"></script>
+
+    </script>
+
+    <script src="gl-matrix.js"></script>
+    <!--script src="objLoader.js"></script-->
+    <script src="webgl-obj-loader.js"></script>
+    <script src="zenibar.js"></script>
 
 </body>
 </html>

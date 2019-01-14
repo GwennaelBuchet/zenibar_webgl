@@ -97,17 +97,7 @@ function handleMouseMove(event) {
 	let deltaX = (newX - lastMouseX) / 35.;
 	let deltaZ = (newY - lastMouseY) / 35.;
 
-	if (beerGlass !== null) {
-		let nextX = beerGlass.translation[0] + deltaX;
-		let nextZ = beerGlass.translation[2] + deltaZ;
-		if (nextX <= 10.4 && nextX >= -9.0) {
-			beerGlass.translation[0] = nextX;
-		}
-		if (nextZ <= 0.9 && nextZ >= -3.) {
-			beerGlass.translation[2] = nextZ;
-		}
-
-	}
+	moveGlass(deltaX, deltaZ);
 
 	lastMouseX = newX;
 	lastMouseY = newY;
@@ -168,6 +158,20 @@ function handleKeyDown(event) {
 		isAnimated = !isAnimated;
 	}
 
+}
+
+function moveGlass(deltaX, deltaZ) {
+	if (beerGlass !== null) {
+		let nextX = beerGlass.translation[0] + deltaX;
+		let nextZ = beerGlass.translation[2] + deltaZ;
+		if (nextX <= 12.4 && nextX >= -11.5) {
+			beerGlass.translation[0] = nextX;
+		}
+		if (nextZ <= 0.9 && nextZ >= -3.4) {
+			beerGlass.translation[2] = nextZ;
+		}
+
+	}
 }
 
 function degToRad(degrees) {
@@ -517,6 +521,7 @@ function loadMeshes() {
 						            name: "beerGlass",
 						            mesh: beerGlassMesh,
 						            translation: [0, -4.5, 0],
+						            //rotation: [0, Math.PI, 0],
 						            rotation: [0, 0, 0],
 						            scale: [0.006, 0.006, 0.006],
 						            material: Object.assign({}, materials.reflect)
@@ -550,7 +555,7 @@ function addRandomMug() {
 		material: Object.assign({}, materials.toon),
 
 		reset: function () {
-			this.translation = [-14. + Math.random(), -4.5, -3. + Math.random() * 4.];
+			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
 			this.rotation = [0, Math.random(), 0];
 			this.scale = [0.3, 0.3, 0.3];
 			this.translationSpeed = 0.04 + Math.random() / 30.;
@@ -646,7 +651,7 @@ function loadObjFile(url, type) {
  */
 function initBackgroundBuffers() {
 
-	let halfW = 60;
+	let halfW = 80;
 	let halfH = 50;
 	let depth = -100;
 
