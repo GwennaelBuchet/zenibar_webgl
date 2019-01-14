@@ -96,7 +96,7 @@ function updatePlayerPhoto(idPlayer) {
 
 	let btn = document.getElementById("playbtn");
 	if (btn !== undefined && btn !== null) {
-		btn.innerText = "Let's play " + players[idPlayer].firstname;
+		btn.innerText = "Let's play, " + players[idPlayer].firstname;
 	}
 }
 
