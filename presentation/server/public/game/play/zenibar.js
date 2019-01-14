@@ -888,15 +888,29 @@ function updateScoreDisplay() {
 	document.getElementById("score").innerText = "Score: " + score;
 }
 
+function resetGame() {
+	for (let mug of beerMugs) {
+		mug.reset();
+		mug.isAnimated = false;
+
+		score = 0;
+		updateScoreDisplay();
+
+		isAnimated = true;
+	}
+
+	beerGlass.translation = [0, -4.5, 0];
+}
+
 function isColliding(mesh1, mesh2) {
 	let bbox1 = applyTransfoToBbox(mesh1);
 	let bbox2 = applyTransfoToBbox(mesh2);
 
 	let d = 0;
 
-	return (bbox1.minx <= bbox2.maxx+d && bbox1.maxx >= bbox2.minx+d) &&
-	       (bbox1.miny <= bbox2.maxy+d && bbox1.maxy >= bbox2.miny+d) &&
-	       (bbox1.minz <= bbox2.maxz+d && bbox1.maxz >= bbox2.minz+d);
+	return (bbox1.minx <= bbox2.maxx + d && bbox1.maxx >= bbox2.minx + d) &&
+	       (bbox1.miny <= bbox2.maxy + d && bbox1.maxy >= bbox2.miny + d) &&
+	       (bbox1.minz <= bbox2.maxz + d && bbox1.maxz >= bbox2.minz + d);
 }
 
 function applyTransfoToBbox(mesh) {
@@ -1088,7 +1102,7 @@ function drawScene() {
 					mug.reset();
 					mug.isAnimated = true;
 
-					score ++;
+					score++;
 					updateScoreDisplay();
 				}
 			}
@@ -1109,9 +1123,8 @@ function drawScene() {
 
 				overlayOn();
 
-				displayBBox(beerMug);
-				displayBBox(beerGlass);
-
+				//displayBBox(beerMug);
+				//displayBBox(beerGlass);
 			}
 		}
 	}
