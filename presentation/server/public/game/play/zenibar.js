@@ -19,6 +19,7 @@ const NB_MUGS = 10;
 
 let score = 0;
 let globalAcceleration = 0.;
+let accelerationFactor = 0.04;
 
 let time = 0.0;
 let isAnimated = true;
@@ -1103,7 +1104,7 @@ function drawScene() {
 				mug.rotation[1] += mug.rotationSpeed;
 
 				if (mug.translation[0] > 14.) {
-					globalAcceleration += 0.004;
+					globalAcceleration += accelerationFactor;
 
 					mug.reset();
 					mug.isAnimated = true;
@@ -1129,13 +1130,13 @@ function drawScene() {
 
 				overlayOn();
 
+				players[idPlayer].score = Math.max(players[idPlayer].score, score);
+
 				//displayBBox(beerMug);
 				//displayBBox(beerGlass);
 			}
 		}
 	}
-
-	//time += isAnimated ? 0.01 : 0.0;
 
 	requestAnimationFrame(drawScene);
 }

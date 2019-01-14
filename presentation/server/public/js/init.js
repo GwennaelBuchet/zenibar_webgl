@@ -1,4 +1,4 @@
-window.onload = function () {
+function loadWS() {
 
 	let self = this;
 	this.ws = new WebSocket("ws://" + window.location.hostname + ":8081");
@@ -72,3 +72,5 @@ function resize(canvas) {
 		canvas.height = displayHeight;
 	}
 }
+
+window.addEventListener('load', loadWS,false);

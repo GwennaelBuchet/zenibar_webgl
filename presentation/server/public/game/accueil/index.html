@@ -10,6 +10,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="../../assets/main.css"/>
+    <link rel="stylesheet" href="../../assets/table.css"/>
 </head>
 <body>
 
@@ -18,7 +19,9 @@
 
     <!-- Header -->
     <header id="header">
-        <span class="avatar_accueil"><img src="../../assets/beer2.jpg" alt=""/></span>
+        <span class="avatar_accueil">
+            <img id="playerPhoto" src="../../assets/beer2.jpg" alt=""/>
+        </span>
         <h1 class="smaller"><i>"Avoid Mugs (that's not beer...)"</i> game</h1>
         <ul class="icons">
             <li><a href="#" class="icon style2 fa-gamepad"><span class="label">Gamepad</span></a></li>
@@ -31,38 +34,41 @@
     </header>
 
     <!-- Main -->
-    <section id="content_center">
+    <div id="game">
+        <section id="content_center">
 
-        <canvas id="scene" width="640" height="480">
-            It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
-            It's time to come back to the present days... :(
-        </canvas>
+            <canvas id="scene" width="640" height="480">
+                It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
+                It's time to come back to the present days... :(
+            </canvas>
 
-        <div id="noContextLayer" style="display: none">
-            <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
-            <h3>It's time to come back to the present days...</h3>
-        </div>
-
-    </section>
-
-    <!-- Footer -->
-    <footer id="footer-bonsoir">
-
-        <div id="footer-bonsoir-left">
-        </div>
-
-        <div id="footer-bonsoir-center">
-            <div class="company-logo">
-                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
-                <p class="company-tagline-1">&lt;animés par la passion&gt;</p>
+            <div id="noContextLayer" style="display: none">
+                <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
+                <h3>It's time to come back to the present days...</h3>
             </div>
-            <p>&copy; Zenika 2019. All rights reserved.
-            </p>
+
+        </section>
+
+        <div id="column-right">
+            <div class="table-title">
+                <h3>Player's Score</h3>
+            </div>
+            <table class="table-fill">
+                <thead>
+                <tr>
+                    <th class="text-left">Player</th>
+                    <th class="text-left">Score</th>
+                </tr>
+                </thead>
+                <tbody class="table-hover" id="table-list">
+
+                </tbody>
+            </table>
         </div>
 
-        <div id="footer-bonsoir-right">
-        </div>
-    </footer>
+    </div>
+
+
 </div>
 
 
@@ -79,6 +85,9 @@ void main() {
   gl_Position = vec4(aVertexPosition, 1.0);
   //gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
 }
+
+
+
 </script>
 
 <script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
@@ -95,6 +104,9 @@ void main() {
   vec4 t = uViewDirectionProjectionInverse * vVertexPosition;
   outColor = texture(uSampler, normalize(t.xyz / t.w));
 }
+
+
+
 </script>
 
 
@@ -118,6 +130,9 @@ void main() {
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
+
+
+
 </script>
 
 <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
@@ -141,6 +156,9 @@ void main() {
   outColor = texture(uSampler, direction) * 1.4;
   outColor.a = uAlpha;
 }
+
+
+
 </script>
 
 <script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
@@ -183,6 +201,9 @@ void main() {
 
 	gl_Position = uProjectionMatrix * vertex;
 }
+
+
+
 </script>
 
 <script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
@@ -205,6 +226,9 @@ void main(void)
 	outColor = mix(refractionColor, reflectionColor, vFresnel);
 	outColor.a = uAlpha;
 }
+
+
+
 </script>
 
 
@@ -230,6 +254,9 @@ void main()
 
     vTextureCoord = aTextureCoord;
 }
+
+
+
 </script>
 
 <script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
@@ -287,6 +314,9 @@ void main()
         outColor = vec4(texelColor, uAlpha);
     }
 }
+
+
+
 </script>
 
 <script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
@@ -311,6 +341,9 @@ void main()
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
+
+
+
 </script>
 
 <script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
@@ -360,6 +393,9 @@ void main()
 
     outColor = vec4(color, uAlpha);
 }
+
+
+
 </script>
 
 <script id="background-vshader" type="x-shader/x-vertex">#version 300 es
@@ -377,6 +413,9 @@ void main(void) {
   gl_Position = uProjectionMatrix  * vec4(aVertexPosition, 1.0);
   vTextureCoord = aTextureCoord;
 }
+
+
+
 </script>
 
 <script id="background-fshader" type="x-shader/x-fragment">#version 300 es
@@ -391,22 +430,28 @@ out vec4 outColor;
 void main(void) {
     outColor = texture(uSampler, vTextureCoord);
 }
+
+
+
 </script>
 
+<script src="../players.js"></script>
 <script src="../../js/init.js"></script>
 <script src="gl-matrix.js"></script>
 <script src="webgl-obj-loader.js"></script>
 <script src="zenibar.js"></script>
 
 <script>
-    document.addEventListener("keydown", navigation, false);
-    function navigation(event) {
-        if (event.key.toUpperCase() === "ARROWRIGHT") {
-            nextPage();
-        } else if (event.key.toUpperCase() === "ARROWLEFT") {
-            previousPage();
-        }
-    }
+	document.addEventListener("keydown", navigation, false);
+
+	function navigation(event) {
+		if (event.key.toUpperCase() === "ARROWRIGHT") {
+			nextPage();
+		}
+		else if (event.key.toUpperCase() === "ARROWLEFT") {
+			previousPage();
+		}
+	}
 </script>
 
 </body>
