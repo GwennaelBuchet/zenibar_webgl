@@ -31,15 +31,21 @@ const pages = [
 	"/zenibar/index.html",
 	"/archibar/index.html",
 	"/bonsoir/index.html",
-	"/demo_cube/0/index.html", // les 4 étapes principales
-	"/demo_cube/1/index.html", // Initialiser le context WebGL2
-	"/demo_cube/2/index.html", // Remplir le buffer des positions
-	"/demo_cube/3/index.html", // Remplir le buffer des indices + Afficher
-	"/demo_cube/4/index.html", // Matrice de Projection et de Vue
-	"/demo_cube/5/index.html", // Calculate Vertices Position
-	"/demo_cube/6/index.html", // Calculate Fragments Position
-	"/demo_anime/0/index.html",
-	"/demo_anime/1/index.html",
+	"/demo_01_cube/0/index.html", 		// les 4 étapes principales
+	"/demo_01_cube/1/index.html", 		// Initialiser le context WebGL2
+	"/demo_01_cube/2/index.html", 		// Remplir le buffer des positions
+	"/demo_01_cube/3/index.html", 		// Remplir le buffer des indices
+	"/demo_01_cube/4/index.html", 		// Remplir le buffer des couleurs
+	"/demo_01_cube/5/index.html", 		// Matrice de Projection et de Vue
+	"/demo_01_cube/6/index.html", 		// Calculate Vertices Position
+	"/demo_01_cube/7/index.html", 		// Calculate Fragments Position
+	"/demo_01_cube/8/index.html", 		// La tuyauterie entre CPU et GPU
+	"/demo_02_anime/0/index.html", 		// Modification de la matrice modelView
+	"/demo_02_anime/1/index.html", 		// Boucle de rendu
+	"/demo_03_light/0/index.html", 		// Définition des normals
+	"/demo_03_light/1/index.html", 		// Interpolation des normals
+	"/demo_03_light/2/index.html", 		// Phong Shading
+	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
 	"/demo_cube_wave/index.html",
 	"/accueil/index.html", // <== For the last slide /!\ Take care: that makes a loop /!\
 ];

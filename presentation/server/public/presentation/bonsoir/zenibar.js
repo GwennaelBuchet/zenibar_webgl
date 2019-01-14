@@ -48,8 +48,7 @@ function initGL(canvas) {
 	if (!gl) {
 		canvas.style.display = "none";
 		document.getElementById("noContextLayer").style.display = "block";
-	}
-	else {
+	} else {
 		drawMode = gl.TRIANGLES;
 	}
 }
@@ -123,9 +122,6 @@ function handleMouseWheel(event) {
 }
 
 function handleKeyDown(event) {
-
-	//console.log(event.key);
-
 	if (event.key.toUpperCase() === "L") {
 		useLight = !useLight;
 	} else if (event.key.toUpperCase() === "W") {
@@ -140,12 +136,9 @@ function handleKeyDown(event) {
 	} else if (event.key.toUpperCase() === "ARROWDOWN") {
 		camera.position[1] -= 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
-	}
-
-	else if (event.key === " ") {
+	} else if (event.key === " ") {
 		isAnimated = !isAnimated;
 	}
-
 }
 
 function degToRad(degrees) {
