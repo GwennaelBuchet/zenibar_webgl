@@ -17,6 +17,8 @@ let beerMugs = [];
 let beerMugMesh = null;
 const NB_MUGS = 10;
 
+let score = 0;
+
 let time = 0.0;
 let isAnimated = true;
 let useLight = true;
@@ -161,7 +163,7 @@ function handleKeyDown(event) {
 }
 
 function moveGlass(deltaX, deltaZ) {
-	if (beerGlass !== null) {
+	if (beerGlass !== null && isAnimated) {
 		let nextX = beerGlass.translation[0] + deltaX;
 		let nextZ = beerGlass.translation[2] + deltaZ;
 		if (nextX <= 12.4 && nextX >= -11.5) {
@@ -500,7 +502,7 @@ function loadScene() {
  * Load meshes into the "meshes" global array
  */
 function loadMeshes() {
-	meshes.push(initBackgroundBuffers());
+	meshes.push(loadBackground());
 
 	//meshes.push(initCubeBuffers());
 
@@ -509,7 +511,7 @@ function loadMeshes() {
 			      beerMugMesh = createBufferFromData(result);
 			      meshes.push(beerMugMesh);
 			      for (let i = 0; i < NB_MUGS; i++) {
-				      addRandomMug();
+				      loadMug();
 			      }
 
 
@@ -537,7 +539,7 @@ function loadMeshes() {
 		);
 }
 
-function addRandomMug() {
+function loadMug() {
 
 	const faceColors = [
 		[0.933, 0.737, 0.204],    // yellow
@@ -557,7 +559,7 @@ function addRandomMug() {
 		reset: function () {
 			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
 			this.rotation = [0, Math.random(), 0];
-			this.scale = [0.3, 0.3, 0.3];
+			this.scale = [0.25, 0.25, 0.25];
 			this.translationSpeed = 0.04 + Math.random() / 30.;
 			this.rotationSpeed = -0.01 + Math.random() / 40.;
 			this.isAnimated = false;
@@ -574,6 +576,80 @@ function addRandomMug() {
 	scene.push(beerMug);
 
 	beerMugs.push(beerMug);
+}
+
+/**
+ * Initialize the buffers for the background's square
+ * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
+ */
+function loadBackground() {
+
+	let halfW = 80;
+	let halfH = 50;
+	let depth = -100;
+
+	const positions = [
+		-halfW, halfH, depth,
+		halfW, halfH, depth,
+		-halfW, -halfH, depth, //x, y, z
+		halfW, -halfH, depth,
+	];
+
+	const textureCoordinates = [
+		0.0, 0.0,
+		1.0, 0.0,
+		0.0, 1.0,
+		1.0, 1.0,
+	];
+
+	const normals = [
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0
+	];
+
+	const indices = [
+		0, 2, 3, 0, 3, 1
+	];
+
+	return createBufferFromData({
+		                            vertices: positions,
+		                            textures: textureCoordinates,
+		                            vertexNormals: normals,
+		                            indices: indices
+	                            }
+	);
+}
+
+/**
+ * Load external Obj file
+ * @param url {String}
+ * @param type {String} "obj" | "json"
+ * @returns {Promise<any>}
+ */
+function loadObjFile(url, type) {
+
+	return new Promise((resolve, reject) => {
+
+		fetch(url)
+			.then(resp => {
+				return resp.text();
+			})
+			.then(data => {
+				let mesh;
+				if (type === "obj") {
+					mesh = new OBJ.Mesh(data);
+				}
+				else {
+					mesh = JSON.parse(data);
+				}
+				resolve(mesh);
+			})
+			.catch(function (error) {
+				reject(JSON.stringify(error));
+			});
+	});
 }
 
 function createBufferFromData(data) {
@@ -613,80 +689,6 @@ function createBufferFromData(data) {
 		data: data
 	};
 
-}
-
-/**
- * Load external Obj file
- * @param url {String}
- * @param type {String} "obj" | "json"
- * @returns {Promise<any>}
- */
-function loadObjFile(url, type) {
-
-	return new Promise((resolve, reject) => {
-
-		fetch(url)
-			.then(resp => {
-				return resp.text();
-			})
-			.then(data => {
-				let mesh;
-				if (type === "obj") {
-					mesh = new OBJ.Mesh(data);
-				}
-				else {
-					mesh = JSON.parse(data);
-				}
-				resolve(mesh);
-			})
-			.catch(function (error) {
-				reject(JSON.stringify(error));
-			});
-	});
-}
-
-/**
- * Initialize the buffers for the background's square
- * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
- */
-function initBackgroundBuffers() {
-
-	let halfW = 80;
-	let halfH = 50;
-	let depth = -100;
-
-	const positions = [
-		-halfW, halfH, depth,
-		halfW, halfH, depth,
-		-halfW, -halfH, depth, //x, y, z
-		halfW, -halfH, depth,
-	];
-
-	const textureCoordinates = [
-		0.0, 0.0,
-		1.0, 0.0,
-		0.0, 1.0,
-		1.0, 1.0,
-	];
-
-	const normals = [
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0
-	];
-
-	const indices = [
-		0, 2, 3, 0, 3, 1
-	];
-
-	return createBufferFromData({
-		                            vertices: positions,
-		                            textures: textureCoordinates,
-		                            vertexNormals: normals,
-		                            indices: indices
-	                            }
-	);
 }
 
 /**
@@ -882,33 +884,25 @@ function startAMug() {
 	}
 }
 
+function updateScoreDisplay() {
+	document.getElementById("score").innerText = "Score: " + score;
+}
+
 function isColliding(mesh1, mesh2) {
 	let bbox1 = applyTransfoToBbox(mesh1);
 	let bbox2 = applyTransfoToBbox(mesh2);
 
-	let sizeX1 = bbox1.maxx - bbox1.minx;
-	let sizeY1 = bbox1.maxy - bbox1.miny;
-	let sizeZ1 = bbox1.maxz - bbox1.minz;
+	let d = 0;
 
-	//check the X axis
-	if (Math.abs(bbox1.minx - bbox2.minx) < sizeX1) {
-		//check the Y axis
-		if (Math.abs(bbox1.miny - bbox2.miny) < sizeY1) {
-			//check the Z axis
-			if (Math.abs(bbox1.minz - bbox2.minz) < sizeZ1) {
-				return true;
-			}
-		}
-	}
-
-	return false;
-
+	return (bbox1.minx <= bbox2.maxx+d && bbox1.maxx >= bbox2.minx+d) &&
+	       (bbox1.miny <= bbox2.maxy+d && bbox1.maxy >= bbox2.miny+d) &&
+	       (bbox1.minz <= bbox2.maxz+d && bbox1.maxz >= bbox2.minz+d);
 }
 
 function applyTransfoToBbox(mesh) {
 	let bbox = Object.assign({}, mesh.mesh.data.bbox);
 
-	/*tmp = mat4.create();
+	tmp = mat4.create();
 	mat4.translate(tmp, tmp, mesh.translation);
 	mat4.rotateX(tmp, tmp, mesh.rotation[0]);
 	mat4.rotateY(tmp, tmp, mesh.rotation[1]);
@@ -925,10 +919,10 @@ function applyTransfoToBbox(mesh) {
 	bbox.minz = bmin[2];
 	bbox.maxx = bmax[0];
 	bbox.maxy = bmax[1];
-	bbox.maxz = bmax[2];*/
+	bbox.maxz = bmax[2];
 
 
-	bbox.minx *= mesh.scale[0];
+	/*bbox.minx *= mesh.scale[0];
 	bbox.miny *= mesh.scale[1];
 	bbox.minz *= mesh.scale[2];
 	bbox.maxx *= mesh.scale[0];
@@ -940,7 +934,7 @@ function applyTransfoToBbox(mesh) {
 	bbox.minz += mesh.translation[2];
 	bbox.maxx += mesh.translation[0];
 	bbox.maxy += mesh.translation[1];
-	bbox.maxz += mesh.translation[2];
+	bbox.maxz += mesh.translation[2];*/
 
 	return bbox;
 }
@@ -1092,6 +1086,10 @@ function drawScene() {
 
 				if (mug.translation[0] > 12.) {
 					mug.reset();
+					mug.isAnimated = true;
+
+					score ++;
+					updateScoreDisplay();
 				}
 			}
 		}
@@ -1101,13 +1099,15 @@ function drawScene() {
 		drawMesh(elt);
 	}
 
-	if (beerGlass !== null) {
+	if (beerGlass !== null && isAnimated) {
 		for (let i = 0, len = beerMugs.length; i < len; i++) {
 			let beerMug = beerMugs[i];
 			let collide = isColliding(beerGlass, beerMug);
 
 			if (collide) {
 				isAnimated = false;
+
+				overlayOn();
 
 				displayBBox(beerMug);
 				displayBBox(beerGlass);

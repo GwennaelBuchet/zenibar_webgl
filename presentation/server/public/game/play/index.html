@@ -11,6 +11,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" type="text/css" href="../../assets/sunburst.css">
     <link rel="stylesheet" type="text/css" href="../../assets/main.css"/>
+
+    <style>
+        #overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        #text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 50px;
+            color: white;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .cube {
+            width: 400px;
+            height: 100px;
+            -webkit-transition: all 250ms ease;
+            -moz-transition: all 250ms ease;
+            -o-transition: all 250ms ease;
+            transition: all 250ms ease;
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+            -ms-transform-style: preserve-3d;
+            -o-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        /* The two faces of the cube */
+        .default-state,
+        .active-state {
+            height: 100px;
+        }
+
+        /* Position the faces */
+        .default-state {
+            -webkit-transform: translateZ(50px);
+            -moz-transform: translateZ(50px);
+            -ms-transform: translateZ(50px);
+            -o-transform: translateZ(50px);
+            transform: translateZ(50px);
+        }
+
+        .flip-to-top .active-state {
+            -webkit-transform: rotateX(90deg) translateZ(150px);
+            -moz-transform: rotateX(90deg) translateZ(150px);
+            -ms-transform: rotateX(90deg) translateZ(150px);
+            -o-transform: rotateX(90deg) translateZ(150px);
+            transform: rotateX(90deg) translateZ(150px);
+        }
+
+        .flip-to-bottom .active-state {
+            -webkit-transform: rotateX(-90deg) translateZ(-50px);
+            -moz-transform: rotateX(-90deg) translateZ(-50px);
+            -ms-transform: rotateX(-90deg) translateZ(-50px);
+            -o-transform: rotateX(-90deg) translateZ(-50px);
+            transform: rotateX(-90deg) translateZ(-50px);
+        }
+
+        /* Rotate the cube */
+        .cube.flip-to-top:hover {
+            -webkit-transform: rotateX(-89deg);
+            -moz-transform: rotateX(-89deg);
+            -ms-transform: rotateX(-89deg);
+            -o-transform: rotateX(-89deg);
+            transform: rotateX(-89deg);
+        }
+
+        .cube.flip-to-bottom:hover {
+            -webkit-transform: rotateX(89deg);
+            -moz-transform: rotateX(89deg);
+            -ms-transform: rotateX(89deg);
+            -o-transform: rotateX(89deg);
+            transform: rotateX(89deg);
+        }
+
+        .cube {
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .default-state,
+        .active-state {
+            background: #2f2e2d;
+            font-size: 0.7em;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 100px;
+            -webkit-transition: background 250ms ease;
+            -moz-transition: background 250ms ease;
+            -o-transition: background 250ms ease;
+            transition: background 250ms ease;
+        }
+
+        .cube:hover .default-state {
+            background: #391c16;
+        }
+
+        .drink {
+            background: #465991;
+        }
+        .uber {
+            background: #913e34;
+        }
+
+
+
+
+    </style>
 </head>
 <body>
 
@@ -19,9 +142,8 @@
     <!-- Header -->
     <header id="header" style="text-align: center">
         <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-        <h1>Let's Play</h1>
+        <h1 id="score">Score: 0</h1>
     </header>
-
 
     <section id="content_center">
 
@@ -38,7 +160,35 @@
         </div>
     </section>
 
-    <script id="skybox-vshader" type="x-shader/x-vertex">#version 300 es
+    <div id="overlay">
+        <div id="text">
+            <p>Oups, you loose...</p>
+            <p>Should you consider to drink more to win?</p>
+            <p>Let's try again ...</p>
+
+            <div class="cube flip-to-top" onclick="overlayOff(); location.href='index.html'">
+                <div class="default-state">
+                    <span>Play Again</span>
+                </div>
+                <div class="active-state drink">
+                    <span>Let's drink a beer</span>
+                </div>
+            </div>
+
+            <div class="cube flip-to-bottom" onclick="overlayOff(); location.href='../accueil/index.html'">
+                <div class="default-state">
+                    <span>No thx.</span>
+                </div>
+                <div class="active-state uber">
+                    <span>Call me a Uber pls...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script id="skybox-vshader" type="x-shader/x-vertex">#version 300 es
 layout(location = 0) in vec3 aVertexPosition;
 
 uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
@@ -53,9 +203,14 @@ void main() {
 }
 
 
-    </script>
 
-    <script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
+
+
+
+
+</script>
+
+<script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 
 in vec4 vVertexPosition;
@@ -72,10 +227,15 @@ void main() {
 
 
 
-    </script>
 
 
-    <script id="reflect-vshader" type="x-shader/x-vertex">#version 300 es
+
+
+
+</script>
+
+
+<script id="reflect-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -96,9 +256,14 @@ void main() {
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
 
-    </script>
 
-    <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
+
+
+
+
+</script>
+
+<script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
 precision highp float;
 
 in vec3 vWorldPosition;
@@ -121,9 +286,14 @@ void main() {
 }
 
 
-    </script>
 
-    <script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
+
+
+
+
+</script>
+
+<script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -167,9 +337,14 @@ void main() {
 
 
 
-    </script>
 
-    <script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
+
+
+
+
+</script>
+
+<script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
 precision highp float;
 
 uniform samplerCube uSampler;
@@ -192,10 +367,15 @@ void main(void)
 
 
 
-    </script>
 
 
-    <script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
+
+
+
+</script>
+
+
+<script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -220,9 +400,14 @@ void main()
 }
 
 
-    </script>
 
-    <script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
+
+
+
+
+</script>
+
+<script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 out vec4 outColor;
 
@@ -280,9 +465,14 @@ void main()
 
 
 
-    </script>
 
-    <script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
+
+
+
+
+</script>
+
+<script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 1) in vec3 aVertexNormal;
@@ -308,9 +498,14 @@ void main()
 
 
 
-    </script>
 
-    <script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
+
+
+
+
+</script>
+
+<script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 out vec4 outColor;
 
@@ -360,9 +555,14 @@ void main()
 
 
 
-    </script>
 
-    <script id="background-vshader" type="x-shader/x-vertex">#version 300 es
+
+
+
+
+</script>
+
+<script id="background-vshader" type="x-shader/x-vertex">#version 300 es
 
 layout(location = 0) in vec3 aVertexPosition;
 layout(location = 2) in vec2 aTextureCoord;
@@ -380,9 +580,14 @@ void main(void) {
 
 
 
-    </script>
 
-    <script id="background-fshader" type="x-shader/x-fragment">#version 300 es
+
+
+
+
+</script>
+
+<script id="background-fshader" type="x-shader/x-fragment">#version 300 es
 precision mediump float;
 
 in vec2 vTextureCoord;
@@ -397,12 +602,27 @@ void main(void) {
 
 
 
-    </script>
 
-    <script src="gl-matrix.js"></script>
-    <!--script src="objLoader.js"></script-->
-    <script src="webgl-obj-loader.js"></script>
-    <script src="zenibar.js"></script>
+
+
+
+
+</script>
+
+<script src="gl-matrix.js"></script>
+<!--script src="objLoader.js"></script-->
+<script src="webgl-obj-loader.js"></script>
+<script src="zenibar.js"></script>
+
+<script>
+	function overlayOn() {
+		document.getElementById("overlay").style.display = "block";
+	}
+
+	function overlayOff() {
+		document.getElementById("overlay").style.display = "none";
+	}
+</script>
 
 </body>
 </html>
