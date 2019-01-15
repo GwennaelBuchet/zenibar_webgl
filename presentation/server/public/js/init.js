@@ -1,6 +1,5 @@
 function loadWS() {
 
-	let self = this;
 	this.ws = new WebSocket("ws://" + window.location.hostname + ":8081");
 
 	this.ws.onopen = function (event) {
@@ -8,18 +7,27 @@ function loadWS() {
 	};
 	this.ws.onmessage = function (event) {
 		let msg = JSON.parse(event.data);
-		let page = msg.page;
-		if (msg.id !== undefined && msg.id !== null) {
-			page += "?id=" + msg.id;
+
+		let action = msg.action;
+
+		if (action === "page") {
+			let page = msg.page;
+			if (msg.id !== undefined && msg.id !== null) {
+				page += "?id=" + msg.id;
+			}
+			location.replace(page);
 		}
-		location.replace(page);
+
+		else if (action === "drink") {
+			startAMug();
+		}
 	};
 	this.ws.onerror = function (event) {
 		console.log("Websocket connection error : " + event);
 	};
 
 	main();
-};
+}
 
 function goToPage(pathname) {
 	document.location.href = pathname;

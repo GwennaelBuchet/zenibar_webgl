@@ -1142,6 +1142,3 @@ function drawScene() {
 
 	requestAnimationFrame(drawScene);
 }
-
-
-main();

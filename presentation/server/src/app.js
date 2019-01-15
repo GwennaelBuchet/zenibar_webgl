@@ -31,7 +31,7 @@ app.post("/drink", function (req, res) {
 
 	console.log("Drink");
 
-	wss.sendText(JSON.stringify({"page": "/game_play/index.html"}));
+	wss.sendText(JSON.stringify({"action":"drink", "page": "/game/play/index.html"}));
 });
 
 app.post("/connect", function (req, res) {
@@ -41,7 +41,7 @@ app.post("/connect", function (req, res) {
 
 	console.log("connect : " + id);
 
-	wss.sendText(JSON.stringify({"page": "/game_accueil/index.html", "id": id}));
+	wss.sendText(JSON.stringify({"action":"page", "page": "/game/accueil/index.html", "id": id}));
 });
 
 
