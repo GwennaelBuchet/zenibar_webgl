@@ -639,7 +639,7 @@ void main()
       texture(uSampler, vTextureCoord + onePixel * vec2( 1,  1)) * u_kernel[8] ;
   outColor = vec4(colorSum / u_kernelWeight);
 
-  //outColor.a = uAlpha;
+  outColor.a = 0.2;
 }
 
 </script>

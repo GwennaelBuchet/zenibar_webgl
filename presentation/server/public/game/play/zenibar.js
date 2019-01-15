@@ -535,7 +535,7 @@ function loadScene() {
 	loadMeshes();
 
 	//background
-	let back = loadSquare(80, 50, -100);
+	let back = loadSquare(80, 50, -100, 1.);
 	let eltBack = {
 		name: "background",
 		mesh: back, // background mesh
@@ -549,7 +549,7 @@ function loadScene() {
 	scene.push(eltBack);
 
 	//mirror table
-	let tableMesh = loadSquare(14, 2.5, 0);
+	let tableMesh = loadSquare(14, 2.5, 0, 0.4);
 	mirrorTable = {
 		name: "mirror",
 		mesh: tableMesh,
@@ -656,7 +656,7 @@ function loadMug() {
  * Initialize the buffers for the background's square
  * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
  */
-function loadSquare(halfW, halfH, depth) {
+function loadSquare(halfW, halfH, depth, texFactore) {
 
 	const positions = [
 		-halfW, halfH, depth,
@@ -668,8 +668,8 @@ function loadSquare(halfW, halfH, depth) {
 	const textureCoordinates = [
 		0.0, 0.0,
 		1.0, 0.0,
-		0.0, 1.0,
-		1.0, 1.0,
+		0.0, texFactore,
+		1.0, texFactore,
 	];
 
 	const normals = [
@@ -1151,9 +1151,7 @@ function drawMesh(elt, displayAspect) {
 function drawScene() {
 
 	// Clear the color buffer
-	gl.clearColor(0.0, 0.0, 0.0, 0.0);
 	gl.clearDepth(1.0);
-	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
 
 	gl.depthMask(true);
@@ -1187,7 +1185,7 @@ function drawScene() {
 		// Tell WebGL how to convert from clip space to pixels
 		gl.viewport(0, 0, mirrorTextureWidth, mirrorTextureHeight);
 
-		gl.clearColor(1.0, 1.0, 1.0, 0.0);
+		gl.clearColor(0., 0., 0., 0.);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.enable(gl.DEPTH_TEST);
 		gl.depthFunc(gl.LEQUAL);
@@ -1217,6 +1215,7 @@ function drawScene() {
 
 		gl.clearColor(0.0, 0.0, 0.0, 0.0);
 		gl.clearDepth(1.0);
+		gl.enable(gl.DEPTH_TEST);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
