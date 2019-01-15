@@ -17,6 +17,10 @@ let beerMugs = [];
 let beerMugMesh = null;
 const NB_MUGS = 10;
 let mirrorTable = null; //used for the reflection of the scene on the table
+let frameBuffer = null;
+
+const mirrorTextureWidth = 512;
+const mirrorTextureHeight = 512; //Math.floor(mirrorTextureWidth / 5.6);
 
 let score = 0;
 let globalAcceleration = 0.;
@@ -41,6 +45,7 @@ function main() {
 	initEvents(canvas);
 	initCamera();
 	loadTextures();
+	createMirrorTexture();
 	initMaterials();
 	loadScene();
 
@@ -122,8 +127,8 @@ function handleMouseWheel(event) {
 
 	mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
 
-	event.preventDefault();
-*/
+	event.preventDefault();*/
+
 	return false;
 }
 
@@ -295,6 +300,19 @@ function initMaterials() {
 		alpha: 1.0,
 		programParams: {
 			globals: getGlobalsProgramParams(backgroundProgram)
+		}
+	};
+
+	let mirrorProgram = initShaderProgram("mirror-vshader", "mirror-fshader");
+	materials.mirror = {
+		name: "mirror",
+		useTexture: true,
+		textureType: gl.TEXTURE_2D,
+		texture: textures.mirror,
+		program: mirrorProgram,
+		alpha: 1.0,
+		programParams: {
+			globals: getGlobalsProgramParams(mirrorProgram)
 		}
 	};
 
@@ -474,6 +492,10 @@ function loadTexture2D(url) {
 	              srcType,
 	              new Uint8Array([255, 0, 0, 255]) // default color value
 	);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
 	//image is loaded asynchronously
 	const image = new Image();
@@ -481,6 +503,11 @@ function loadTexture2D(url) {
 		gl.bindTexture(gl.TEXTURE_2D, texture);
 		gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
 
+
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 		gl.generateMipmap(gl.TEXTURE_2D);
 	};
 	image.src = url;
@@ -488,11 +515,27 @@ function loadTexture2D(url) {
 	return texture;
 }
 
+function createMirrorTexture() {
+	// create to render to
+	textures.mirrorTexture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D, textures.mirrorTexture);
+
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+	              mirrorTextureWidth, mirrorTextureHeight,
+	              0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+	// set the filtering so we don't need mips
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+}
+
 function loadScene() {
 	loadMeshes();
 
 	//background
-	let back = loadBackground(80, 50, -100);
+	let back = loadSquare(80, 50, -100);
 	let eltBack = {
 		name: "background",
 		mesh: back, // background mesh
@@ -506,20 +549,28 @@ function loadScene() {
 	scene.push(eltBack);
 
 	//mirror table
-	let tableMesh = loadBackground(14, 2.5, 0);
+	let tableMesh = loadSquare(14, 2.5, 0);
 	mirrorTable = {
 		name: "mirror",
 		mesh: tableMesh,
-		//translation: [0, -4.5, -1.2],
-		//rotation: [Math.PI / 2.0, 0, 0],
 		translation: [0, -4.5, -1.2],
-		rotation: [0, 0, Math.PI],
+		rotation: [Math.PI / 2.0, 0, 0],
+		//translation: [0, -4.5, -1.2],
+		//rotation: [0, 0, 0],
 		scale: [1, 1, 1],
-		material: Object.assign({}, materials.phong)
+		material: Object.assign({}, materials.mirror)
 	};
-	mirrorTable.material.texture = textures.background;
+	mirrorTable.material.texture = textures.mirrorTexture;
 	mirrorTable.material.useTexture = true;
+	mirrorTable.material.alpha = 0.2;
 	scene.push(mirrorTable);
+
+	// Create and bind the framebuffer
+	frameBuffer = gl.createFramebuffer();
+	gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+
+	// attach the texture as the first color attachment
+	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures.mirrorTexture, 0);
 }
 
 /**
@@ -605,7 +656,7 @@ function loadMug() {
  * Initialize the buffers for the background's square
  * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
  */
-function loadBackground(halfW, halfH, depth) {
+function loadSquare(halfW, halfH, depth) {
 
 	const positions = [
 		-halfW, halfH, depth,
@@ -972,12 +1023,19 @@ function applyTransfoToBbox(mesh) {
 	return bbox;
 }
 
-function drawMesh(elt) {
+function drawMesh(elt, displayAspect) {
 
 	let programParams = elt.material.programParams;
 
 	// Set the shader program to use
 	gl.useProgram(elt.material.program);
+
+	mat4.perspective(projectionMatrix,
+	                 45 * Math.PI / 180, // fieldOfView, in radians
+	                 displayAspect, // aspect
+	                 0.1, // zNear,
+	                 300 //zFar
+	);
 
 	// move object
 	let viewMatrix = mat4.create();
@@ -1100,16 +1158,7 @@ function drawScene() {
 
 	gl.depthMask(true);
 	gl.enable(gl.BLEND);
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-	mat4.perspective(projectionMatrix,
-	                 45 * Math.PI / 180, // fieldOfView, in radians
-	                 gl.canvas.clientWidth / gl.canvas.clientHeight, // aspect
-	                 0.1, // zNear,
-	                 300 //zFar
-	);
 
 	if (isAnimated) {
 		for (let mug of beerMugs) {
@@ -1130,8 +1179,52 @@ function drawScene() {
 		}
 	}
 
-	for (let elt of scene) {
-		drawMesh(elt);
+	//first, render onto the mirror texture
+	{
+		// render to our targetTexture by binding the framebuffer
+		gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+
+		// Tell WebGL how to convert from clip space to pixels
+		gl.viewport(0, 0, mirrorTextureWidth, mirrorTextureHeight);
+
+		gl.clearColor(1.0, 1.0, 1.0, 0.0);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
+
+		gl.depthMask(true);
+		gl.enable(gl.BLEND);
+
+		//gl.blendEquationSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+
+		//const aspect = mirrorTextureWidth / mirrorTextureHeight;
+		const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+		for (let elt of scene) {
+			//we only need to render the glass and mugs on the mirror
+			if (elt.name !== "mirror" && elt.name !== "background") {
+				drawMesh(elt, aspect);
+			}
+		}
+	}
+
+	//second, render onto the canvas
+	{
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+		gl.clearColor(0.0, 0.0, 0.0, 0.0);
+		gl.clearDepth(1.0);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+		const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+		for (let elt of scene) {
+			drawMesh(elt, aspect);
+		}
 	}
 
 	if (beerGlass !== null && isAnimated) {
