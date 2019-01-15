@@ -16,6 +16,7 @@ let beerGlass = null;
 let beerMugs = [];
 let beerMugMesh = null;
 const NB_MUGS = 10;
+let mirrorTable = null; //used for the reflection of the scene on the table
 
 let score = 0;
 let globalAcceleration = 0.;
@@ -32,6 +33,7 @@ let drawMode = 4;
 
 let projectionMatrix = mat4.create();
 let globalSceneMatrix = mat4.create();
+
 
 function main() {
 	const canvas = document.getElementById("scene");
@@ -489,10 +491,12 @@ function loadTexture2D(url) {
 function loadScene() {
 	loadMeshes();
 
+	//background
+	let back = loadBackground(80, 50, -100);
 	let eltBack = {
-		name: "bacground",
-		mesh: meshes[0], // background mesh
-		translation: [0, 0, -200],
+		name: "background",
+		mesh: back, // background mesh
+		translation: [0, 0, 0],
 		rotation: [0, 0, 0],
 		scale: [1, 1, 1],
 		material: Object.assign({}, materials.background)
@@ -500,15 +504,28 @@ function loadScene() {
 	eltBack.material.texture = textures.background;
 	eltBack.material.useTexture = true;
 	scene.push(eltBack);
+
+	//mirror table
+	let tableMesh = loadBackground(14, 2.5, 0);
+	mirrorTable = {
+		name: "mirror",
+		mesh: tableMesh,
+		//translation: [0, -4.5, -1.2],
+		//rotation: [Math.PI / 2.0, 0, 0],
+		translation: [0, -4.5, -1.2],
+		rotation: [0, 0, Math.PI],
+		scale: [1, 1, 1],
+		material: Object.assign({}, materials.phong)
+	};
+	mirrorTable.material.texture = textures.background;
+	mirrorTable.material.useTexture = true;
+	scene.push(mirrorTable);
 }
 
 /**
  * Load meshes into the "meshes" global array
  */
 function loadMeshes() {
-	meshes.push(loadBackground());
-
-	//meshes.push(initCubeBuffers());
 
 	loadObjFile("../assets/Mug.obj", "obj")
 		.then(result => {
@@ -588,11 +605,7 @@ function loadMug() {
  * Initialize the buffers for the background's square
  * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
  */
-function loadBackground() {
-
-	let halfW = 80;
-	let halfH = 50;
-	let depth = -100;
+function loadBackground(halfW, halfH, depth) {
 
 	const positions = [
 		-halfW, halfH, depth,
