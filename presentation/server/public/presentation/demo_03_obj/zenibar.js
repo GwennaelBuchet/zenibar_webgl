@@ -1,40 +1,39 @@
-/**
- * idées d'animation :
- * - jeux : tunnel infini avec obstacles et verre/bouteille à faire bouger pour éviter les obstacles (1 verre offert tous les 15 obstacles)
- * - jeux : bouteilles qui tombent (système de particules), le joueur fait bouger un réceptacle (verre géant ?) pour les ramasser (1 verre offert toutes les 15 bouteilles)
- *
- *
- */
-
 let gl;
 let meshes = [];
 let textures = {};
 let materials = {};
 let scene = [];
 let camera = {};
-let beerGlass = null;
-let beerMugs = [];
-let beerMugMesh = null;
-const NB_MUGS = 10;
-
-let score = 0;
-let globalAcceleration = 0.;
-let accelerationFactor = 0.01;
-let maxSpeed = 0.3;
 
 let time = 0.0;
-let isAnimated = true;
-
+let isAnimated = false;
 let useLight = true;
-let lightPos = [40.0, 40.0, 40.0];
-let lightColor = [1.0, 1.0, 1.0];
+let useTexture = true;
+let useAmbientLight = true;
+let useDiffuseLight = true;
+let useSpecularLight = true;
+let useSpecularMap = true;
+
+let lightPos = [10.0, -15.0, 10.0];
+let lightColor = [0.1, 0.1, 0.1];
+let lightDirection = [1.0, 1.0, 1.0];
 let drawMode = 4;
 
 let projectionMatrix = mat4.create();
 let globalSceneMatrix = mat4.create();
 
+// flip texture by Y
+let textureMatrix = mat4.create();
+mat4.multiply(textureMatrix, [
+      1, 0, 0, 0,
+      0, -1, 0, 0,
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+    ], textureMatrix);
+
 function main() {
 	const canvas = document.getElementById("scene");
+
 	initGL(canvas);
 	initEvents(canvas);
 	initCamera();
@@ -55,8 +54,6 @@ function initGL(canvas) {
 	if (!gl) {
 		canvas.style.display = "none";
 		document.getElementById("noContextLayer").style.display = "block";
-	} else {
-		drawMode = gl.TRIANGLES;
 	}
 }
 
@@ -99,10 +96,14 @@ function handleMouseMove(event) {
 	let newX = event.clientX;
 	let newY = event.clientY;
 
-	let deltaX = (newX - lastMouseX) / 35.;
-	let deltaZ = (newY - lastMouseY) / 35.;
+	let deltaX = newX - lastMouseX;
+	let newRotationMatrix = mat4.create();
+	mat4.identity(newRotationMatrix);
+	mat4.rotate(newRotationMatrix, newRotationMatrix, degToRad(deltaX / 10), [0, 1, 0]);
 
-	moveGlass(deltaX, deltaZ);
+	let deltaY = newY - lastMouseY;
+	mat4.rotate(newRotationMatrix, newRotationMatrix, degToRad(deltaY / 10), [1, 0, 0]);
+	mat4.multiply(globalSceneMatrix, newRotationMatrix, globalSceneMatrix);
 
 	lastMouseX = newX;
 	lastMouseY = newY;
@@ -112,7 +113,7 @@ function handleMouseMove(event) {
 
 function handleMouseWheel(event) {
 
-	/*camera.position[0] += event.deltaX / 30.;
+	camera.position[0] += event.deltaX / 30.;
 	camera.position[2] += event.deltaY / 30.;
 	camera.target[0] += event.deltaX / 30.;
 	camera.target[2] += event.deltaY / 30.;
@@ -120,46 +121,39 @@ function handleMouseWheel(event) {
 	mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
 
 	event.preventDefault();
-*/
+
 	return false;
 }
 
 function handleKeyDown(event) {
-	if (event.key.toUpperCase() === "L") {
-		useLight = !useLight;
-	} else if (event.key.toUpperCase() === "W") {
+	if (event.key.toUpperCase() === "W") {
 		drawMode = gl.LINES;
 	} else if (event.key.toUpperCase() === "T") {
 		drawMode = gl.TRIANGLES;
 	} else if (event.key.toUpperCase() === "P") {
 		drawMode = gl.POINTS;
-	} else if (event.key.toUpperCase() === "M") {
-		startAMug();
-	} else if (event.key.toUpperCase() === "B") {
-		displayBBox(beerGlass);
 	} else if (event.key.toUpperCase() === "ARROWUP") {
 		camera.position[1] += 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
 	} else if (event.key.toUpperCase() === "ARROWDOWN") {
 		camera.position[1] -= 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
-	} else if (event.key === " ") {
+	} else if (event.key.toUpperCase() === "R") { // Rotate
+		time += 0.10;
+	} else if (event.key.toUpperCase() === " ") { // Toggle Animation
 		isAnimated = !isAnimated;
+	} else if (event.key.toUpperCase() === "Z") { // Toggle Texture
+		useTexture = !useTexture;
+	} else if (event.key.toUpperCase() === "A") { // Toggle Ambient Light
+		useAmbientLight = !useAmbientLight;
+	} else if (event.key.toUpperCase() === "D") { // Toggle Diffuse Light
+		useDiffuseLight = !useDiffuseLight;
+	} else if (event.key.toUpperCase() === "S") { // Toggle Specular Light
+		useSpecularLight = !useSpecularLight;
+	} else if (event.key.toUpperCase() === "M") { // Toggle Specular Map
+		useSpecularMap = !useSpecularMap;
 	}
-}
 
-function moveGlass(deltaX, deltaZ) {
-	if (beerGlass !== null && isAnimated) {
-		let nextX = beerGlass.translation[0] + deltaX;
-		let nextZ = beerGlass.translation[2] + deltaZ;
-		if (nextX <= 12.4 && nextX >= -11.5) {
-			beerGlass.translation[0] = nextX;
-		}
-		if (nextZ <= 0.9 && nextZ >= -3.4) {
-			beerGlass.translation[2] = nextZ;
-		}
-
-	}
 }
 
 function degToRad(degrees) {
@@ -168,7 +162,7 @@ function degToRad(degrees) {
 
 function initCamera() {
 	camera = {
-		position: [0, 2, 20],
+		position: [0, 5, 20],
 		target: [0, 0, 0],
 		up: [0, 1, 0],
 
@@ -188,16 +182,16 @@ function initMaterials() {
 		name: "phong",
 		useTexture: true,
 		textureType: gl.TEXTURE_2D,
-		texture: textures.bar,
+		texture: textures.bottle,
 		program: phongProgram,
 		alpha: 1.0,
-		ka: 1.0,
-		kd: 1.0,
+		ka: 0.7,
+		kd: 0.8,
 		ks: 1.0,
 		shininess: 90,
-		ambientColor: [0.1, 0.1, 0.1],
+		ambientColor: [0.3, 0.3, 0.3],
 		diffuseColor: [0.267, 0.329, 0.415],
-		specularColor: [1., 1., 1.],
+		specularColor: [1.0, 1.0, 1.0],
 		programParams: {
 			globals: getGlobalsProgramParams(phongProgram),
 
@@ -210,74 +204,6 @@ function initMaterials() {
 			specularColor: gl.getUniformLocation(phongProgram, "uSpecularColor")
 		}
 	};
-
-	let toonProgram = initShaderProgram("toon-vshader", "toon-fshader");
-	materials.toon = {
-		name: "toon",
-		useTexture: false,
-		textureType: gl.TEXTURE_2D,
-		texture: textures.bar,
-		program: toonProgram,
-		alpha: 1.0,
-		ka: 1.0,
-		kd: 1.0,
-		ks: 1.0,
-		shininess: 250,
-		ambientColor: [0.1, 0.1, 0.1],
-		diffuseColor: [0.267, 0.329, 0.415],
-		specularColor: [0.0, 0.0, 0.0],
-		programParams: {
-			globals: getGlobalsProgramParams(toonProgram),
-
-			ka: gl.getUniformLocation(toonProgram, "uKa"),
-			kd: gl.getUniformLocation(toonProgram, "uKd"),
-			ks: gl.getUniformLocation(toonProgram, "uKs"),
-			shininess: gl.getUniformLocation(toonProgram, "uShininess"),
-			ambientColor: gl.getUniformLocation(toonProgram, "uAmbientColor"),
-			diffuseColor: gl.getUniformLocation(toonProgram, "uDiffuseColor"),
-			specularColor: gl.getUniformLocation(toonProgram, "uSpecularColor")
-		}
-	};
-
-	let reflectProgram = initShaderProgram("reflect-vshader", "reflect-fshader");
-	materials.reflect = {
-		name: "reflect",
-		useTexture: true,
-		textureType: gl.TEXTURE_CUBE_MAP,
-		texture: textures.cubemap,
-		program: reflectProgram,
-		alpha: 1.0,
-		programParams: {
-			globals: getGlobalsProgramParams(reflectProgram)
-		}
-	};
-
-	let refractProgram = initShaderProgram("refract-vshader", "refract-fshader");
-	materials.refract = {
-		name: "refract",
-		useTexture: true,
-		textureType: gl.TEXTURE_CUBE_MAP,
-		texture: textures.cubemap,
-		program: refractProgram,
-		alpha: 1.0,
-		programParams: {
-			globals: getGlobalsProgramParams(refractProgram)
-		}
-	};
-
-	let backgroundProgram = initShaderProgram("background-vshader", "background-fshader");
-	materials.background = {
-		name: "background",
-		useTexture: true,
-		textureType: gl.TEXTURE_2D,
-		texture: textures.background,
-		program: backgroundProgram,
-		alpha: 1.0,
-		programParams: {
-			globals: getGlobalsProgramParams(backgroundProgram)
-		}
-	};
-
 }
 
 function getGlobalsProgramParams(program) {
@@ -287,18 +213,26 @@ function getGlobalsProgramParams(program) {
 		vertexNormal: gl.getAttribLocation(program, 'aVertexNormal'),
 
 		projectionMatrix: gl.getUniformLocation(program, 'uProjectionMatrix'),
+		textureMatrix: gl.getUniformLocation(program, 'uTextureMatrix'),
 		viewMatrix: gl.getUniformLocation(program, 'uViewMatrix'),
 		normalMatrix: gl.getUniformLocation(program, 'uNormalMatrix'),
 		worldMatrix: gl.getUniformLocation(program, 'uWorldMatrix'),
 		cameraMatrix: gl.getUniformLocation(program, 'uCameraMatrix'),
 		cameraPosition: gl.getUniformLocation(program, "uCameraPosition"),
 
-		useTexture: gl.getUniformLocation(program, "uUseTexture"),
 		uSampler: gl.getUniformLocation(program, 'uSampler'),
-
-		useLight: gl.getUniformLocation(program, "uUseLight"),
+		uSpecularSampler: gl.getUniformLocation(program, 'uSpecularSampler'),
+		
 		lightPos: gl.getUniformLocation(program, "uLightPos"),
 		lightColor: gl.getUniformLocation(program, "uLightColor"),
+		lightDirection: gl.getUniformLocation(program, "uLightDirection"),
+		
+		useTexture: gl.getUniformLocation(program, "uUseTexture"),
+		useLight: gl.getUniformLocation(program, "uUseLight"),
+		useAmbientLight: gl.getUniformLocation(program, "uUseAmbientLight"),
+		useDiffuseLight: gl.getUniformLocation(program, "uUseDiffuseLight"),
+		useSpecularLight: gl.getUniformLocation(program, "uUseSpecularLight"),
+		useSpecularMap: gl.getUniformLocation(program, "uUseSpecularMap"),
 
 		alpha: gl.getUniformLocation(program, "uAlpha")
 	}
@@ -363,72 +297,8 @@ function createProgram(vertexShader, fragmentShader) {
 
 
 function loadTextures() {
-
-	textures.cubemap = loadTextureCubeMap();
-
-	textures.background = loadTexture2D("../assets/bar.jpg");
-}
-
-function loadTextureCubeMap() {
-	let texture = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-
-	let texPath = "../assets/bar_map/";
-
-	const faceInfos = [
-		{
-			target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-			url: texPath + "posx.jpg"
-		},
-		{
-			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-			url: texPath + "negx.jpg"
-		},
-		{
-			target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-			url: texPath + "posy.jpg"
-		},
-		{
-			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-			url: texPath + "negy.jpg"
-		},
-		{
-			target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-			url: texPath + "posz.jpg"
-		},
-		{
-			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-			url: texPath + "negz.jpg"
-		}
-	];
-	faceInfos.forEach((faceInfo) => {
-		const {target, url} = faceInfo;
-
-		// Upload the canvas to the cubemap face.
-		const level = 0;
-		const internalFormat = gl.RGBA;
-		const width = 2048;
-		const height = 2048;
-		const format = gl.RGBA;
-		const type = gl.UNSIGNED_BYTE;
-
-		// setup each face so it's immediately renderable
-		gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-
-		// Asynchronously load an image
-		const image = new Image();
-		image.src = url;
-		image.addEventListener('load', function () {
-			// Now that the image has loaded make copy it to the texture.
-			gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-			gl.texImage2D(target, level, internalFormat, format, type, image);
-			gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-		});
-	});
-	gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-
-	return texture;
+	textures.bottle = loadTexture2D("../../assets/beer-bottle.jpg");
+	textures.specular = loadTexture2D("../../assets/beer-bottle.png");
 }
 
 /**
@@ -444,23 +314,12 @@ function loadTexture2D(url) {
 	const internalFormat = gl.RGBA;
 	const srcFormat = gl.RGBA;
 	const srcType = gl.UNSIGNED_BYTE;
-	gl.texImage2D(gl.TEXTURE_2D,
-	              level, // level
-	              internalFormat, // internalFormat
-	              1, // width
-	              1, // height
-	              0, // border
-	              srcFormat,
-	              srcType,
-	              new Uint8Array([255, 0, 0, 255]) // default color value
-	);
 
 	//image is loaded asynchronously
 	const image = new Image();
 	image.onload = function () {
 		gl.bindTexture(gl.TEXTURE_2D, texture);
 		gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
-
 		gl.generateMipmap(gl.TEXTURE_2D);
 	};
 	image.src = url;
@@ -470,174 +329,38 @@ function loadTexture2D(url) {
 
 function loadScene() {
 	loadMeshes();
-
-	let eltBack = {
-		name: "bacground",
-		mesh: meshes[0], // background mesh
-		translation: [0, 0, -200],
-		rotation: [0, 0, 0],
-		scale: [1, 1, 1],
-		material: Object.assign({}, materials.background)
-	};
-	eltBack.material.texture = textures.background;
-	eltBack.material.useTexture = true;
-	scene.push(eltBack);
 }
 
 /**
  * Load meshes into the "meshes" global array
  */
 function loadMeshes() {
-	meshes.push(loadBackground());
+		var length = meshes.length;
 
-	//meshes.push(initCubeBuffers());
-
-	loadObjFile("../assets/Mug.obj", "obj")
-		.then(result => {
-			      beerMugMesh = createBufferFromData(result);
-			      meshes.push(beerMugMesh);
-			      for (let i = 0; i < NB_MUGS; i++) {
-				      loadMug();
-			      }
-
-
-			      loadObjFile("../assets/beerglass.obj", "obj")
-				      .then(result => {
-					            let beerGlassMesh = createBufferFromData(result);
-					            meshes.push(beerGlassMesh);
-					            beerGlass = {
-						            name: "beerGlass",
-						            mesh: beerGlassMesh,
-						            translation: [0, -4.5, 0],
-						            //rotation: [0, Math.PI, 0],
-						            rotation: [0, 0, 0],
-						            scale: [0.006, 0.006, 0.006],
-						            material: Object.assign({}, materials.reflect)
-					            };
-					            beerGlass.material.useTexture = false;
-					            beerGlass.material.texture = textures.cubemap;
-					            beerGlass.material.alpha = 0.7;
-
-					            scene.push(beerGlass);
-				            }, error => alert(error)
-				      );
-		      }, error => alert(error)
-		);
-}
-
-function loadMug() {
-
-	const faceColors = [
-		[0.933, 0.737, 0.204],    // yellow
-		[0.357, 0.608, 0.835],    // blue
-		[0.588, 0.722, 0.482],    // green
-		[0.878, 0.592, 0.400],    // orange
-		[0.760, 0.494, 0.815],    // violet
-		[0.267, 0.329, 0.415]     // gray
-	];
-
-
-	let beerMug = {
-		name: "opener",
-		mesh: beerMugMesh,
-		material: Object.assign({}, materials.toon),
-
-		reset: function () {
-			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
-			this.rotation = [0, Math.random(), 0];
-			this.scale = [0.25, 0.25, 0.25];
-			this.translationSpeed = Math.min(0.04 + Math.random() / 30. + globalAcceleration, maxSpeed);
-			this.rotationSpeed = Math.min(-0.01 + Math.random() / 40. + globalAcceleration, maxSpeed);
-			this.isAnimated = false;
-
-			let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
-			beerMug.material.ambientColor = color; //[0.3, 0.3, 0.3];
-			beerMug.material.diffuseColor = color;
-		}
-	};
-	beerMug.material.specularColor = [1., 1., 1.];
-	beerMug.material.shininess = .7;
-	beerMug.material.useTexture = false;
-	beerMug.material.texture = null;
-	beerMug.reset();
-
-	scene.push(beerMug);
-
-	beerMugs.push(beerMug);
-}
-
-/**
- * Initialize the buffers for the background's square
- * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
- */
-function loadBackground() {
-
-	let halfW = 80;
-	let halfH = 50;
-	let depth = -100;
-
-	const positions = [
-		-halfW, halfH, depth,
-		halfW, halfH, depth,
-		-halfW, -halfH, depth, //x, y, z
-		halfW, -halfH, depth,
-	];
-
-	const textureCoordinates = [
-		0.0, 0.0,
-		1.0, 0.0,
-		0.0, 1.0,
-		1.0, 1.0,
-	];
-
-	const normals = [
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0
-	];
-
-	const indices = [
-		0, 2, 3, 0, 3, 1
-	];
-
-	return createBufferFromData({
-		                            vertices: positions,
-		                            textures: textureCoordinates,
-		                            vertexNormals: normals,
-		                            indices: indices
-	                            }
+    loadObjFile("../../assets/beer-bottle.obj", "obj").then(data => {
+				let bottle = createBufferFromData(data);
+				meshes.push(bottle);
+				let eltBottle = {
+						name: "bottle",
+						mesh: bottle,
+						translation: [0.0, -6.0, 0.0],
+						rotation: [-Math.PI / 2, 0.0, 0.0],
+						scale: [0.5, 0.5, 0.5],
+						material: {
+								...materials.phong,
+								ambientColor: [0.1, 0.1, 0.1],
+								diffuseColor: [0.267, 0.329, 0.415],
+								specularColor: [0.5, 0.5, 0.5],
+								useTexture: true,
+								texture: textures.bottle,
+								specularMap: textures.specular,
+								alpha: 1
+						}
+				};
+				scene.push(eltBottle);
+		},
+		error => alert(error)
 	);
-}
-
-/**
- * Load external Obj file
- * @param url {String}
- * @param type {String} "obj" | "json"
- * @returns {Promise<any>}
- */
-function loadObjFile(url, type) {
-
-	return new Promise((resolve, reject) => {
-
-		fetch(url)
-			.then(resp => {
-				return resp.text();
-			})
-			.then(data => {
-				let mesh;
-				if (type === "obj") {
-					mesh = new OBJ.Mesh(data);
-				}
-				else {
-					mesh = JSON.parse(data);
-				}
-				resolve(mesh);
-			})
-			.catch(function (error) {
-				reject(JSON.stringify(error));
-			});
-	});
 }
 
 function createBufferFromData(data) {
@@ -680,48 +403,120 @@ function createBufferFromData(data) {
 }
 
 /**
+ * Load external Obj file
+ * @param url {String}
+ * @param type {String} "obj" | "json"
+ * @returns {Promise<any>}
+ */
+function loadObjFile(url, type) {
+	return new Promise((resolve, reject) => {
+		fetch(url)
+			.then(resp => {
+				return resp.text();
+			})
+			.then(data => {
+				let mesh;
+				if (type === "obj") {
+					mesh = new OBJ.Mesh(data);
+				}
+				else {
+					mesh = JSON.parse(data);
+				}
+				resolve(mesh);
+			})
+			.catch(function (error) {
+				reject(JSON.stringify(error));
+			});
+	});
+}
+
+/**
+ * Initialize the buffers for the background's square
+ * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
+ */
+function initBackgroundBuffers() {
+
+	let halfW = 60;
+	let halfH = 50;
+	let depth = -100;
+
+	const positions = [
+		-halfW, halfH, depth,
+		halfW, halfH, depth,
+		-halfW, -halfH, depth, //x, y, z
+		halfW, -halfH, depth,
+	];
+
+	const textureCoordinates = [
+		0.0, 0.0,
+		1.0, 0.0,
+		0.0, 1.0,
+		1.0, 1.0,
+	];
+
+	const normals = [
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0
+	];
+
+	const indices = [
+		0, 2, 3, 0, 3, 1
+	];
+
+	return createBufferFromData({
+		                            vertices: positions,
+		                            textures: textureCoordinates,
+		                            vertexNormals: normals,
+		                            indices: indices
+	                            }
+	);
+}
+
+/**
  * Initialize the buffers for the Cube we'll display
  * @returns {{verticesBuffer, textureCoordsBuffer, colorsBuffer, normalsBuffer, indicesBuffer, data}}
  */
-function initCubeBuffers(minx, miny, minz, maxx, maxy, maxz) {
+function initCubeBuffers() {
 
 	// Define the position for each vertex of each face
 	const positions = [
 		// Front
-		minx, miny, maxz, //x, y, z
-		maxx, miny, maxz,
-		maxx, maxy, maxz,
-		minx, maxy, maxz,
+		-1.0, -1.0, 1.0, //x, y, z
+		1.0, -1.0, 1.0,
+		1.0, 1.0, 1.0,
+		-1.0, 1.0, 1.0,
 
 		// Back
-		minx, miny, minz,
-		minx, maxy, minz,
-		maxx, maxy, minz,
-		maxx, miny, minz,
+		-1.0, -1.0, -1.0,
+		-1.0, 1.0, -1.0,
+		1.0, 1.0, -1.0,
+		1.0, -1.0, -1.0,
 
 		// Top
-		minx, maxy, minz,
-		minx, maxy, maxz,
-		maxx, maxy, maxz,
-		maxx, maxy, minz,
+		-1.0, 1.0, -1.0,
+		-1.0, 1.0, 1.0,
+		1.0, 1.0, 1.0,
+		1.0, 1.0, -1.0,
 
 		// Bottom
-		minx, miny, minz,
-		maxx, miny, minz,
-		maxx, miny, maxz,
-		minx, miny, maxz,
+		-1.0, -1.0, -1.0,
+		1.0, -1.0, -1.0,
+		1.0, -1.0, 1.0,
+		-1.0, -1.0, 1.0,
 
 		// Right
-		maxx, miny, minz,
-		maxx, maxy, minz,
-		maxx, maxy, maxz,
-		maxx, miny, maxz,
+		1.0, -1.0, -1.0,
+		1.0, 1.0, -1.0,
+		1.0, 1.0, 1.0,
+		1.0, -1.0, 1.0,
 
 		// Left
-		minx, miny, minz,
-		minx, miny, maxz,
-		minx, maxy, maxz,
-		minx, maxy, minz
+		-1.0, -1.0, -1.0,
+		-1.0, -1.0, 1.0,
+		-1.0, 1.0, 1.0,
+		-1.0, 1.0, -1.0
 	];
 
 	// Texture coordinates
@@ -827,118 +622,9 @@ function initCubeBuffers(minx, miny, minz, maxx, maxy, maxz) {
 		                            textures: textureCoordinates,
 		                            colors: colors,
 		                            vertexNormals: normals,
-		                            indices: indices,
-		                            bbox: {
-			                            minx: minx,
-			                            miny: miny,
-			                            minz: minz,
-			                            maxx: maxx,
-			                            maxy: maxy,
-			                            maxz: maxz
-		                            }
+		                            indices: indices
 	                            }
 	);
-}
-
-function displayBBox(mesh) {
-	let bboxGlass = applyTransfoToBbox(mesh);
-	let mGlass = initCubeBuffers(bboxGlass.minx, bboxGlass.miny, bboxGlass.minz, bboxGlass.maxx, bboxGlass.maxy,
-	                             bboxGlass.maxz);
-	meshes.push(mGlass);
-	let oGlass = {
-		name: "bboxGlass",
-		mesh: mGlass,
-		translation: [0, 0, 0],
-		rotation: [0, 0, 0],
-		scale: [1, 1, 1],
-		material: Object.assign({}, materials.phong)
-	};
-	oGlass.material.alpha = 0.5;
-	oGlass.material.ambientColor = [0.1, 0.1, 0.1];
-	oGlass.material.diffuseColor = [1, 1, 1];
-	oGlass.material.specularColor = [1., 1., 1.];
-	oGlass.material.useTexture = false;
-	oGlass.material.texture = null;
-	scene.push(oGlass);
-}
-
-function startAMug() {
-	//find the first of the list which is not animated
-	for (let mug of beerMugs) {
-		if (!mug.isAnimated) {
-			mug.isAnimated = true;
-			break;
-		}
-	}
-}
-
-function updateScoreDisplay() {
-	document.getElementById("score").innerText = "Score: " + score;
-}
-
-function resetGame() {
-	for (let mug of beerMugs) {
-		mug.reset();
-		mug.isAnimated = false;
-
-		score = 0;
-		updateScoreDisplay();
-
-		isAnimated = true;
-	}
-
-	beerGlass.translation = [0, -4.5, 0];
-}
-
-function isColliding(mesh1, mesh2) {
-	let bbox1 = applyTransfoToBbox(mesh1);
-	let bbox2 = applyTransfoToBbox(mesh2);
-
-	let d = 0;
-
-	return (bbox1.minx <= bbox2.maxx + d && bbox1.maxx >= bbox2.minx + d) &&
-	       (bbox1.miny <= bbox2.maxy + d && bbox1.maxy >= bbox2.miny + d) &&
-	       (bbox1.minz <= bbox2.maxz + d && bbox1.maxz >= bbox2.minz + d);
-}
-
-function applyTransfoToBbox(mesh) {
-	let bbox = Object.assign({}, mesh.mesh.data.bbox);
-
-	tmp = mat4.create();
-	mat4.translate(tmp, tmp, mesh.translation);
-	mat4.rotateX(tmp, tmp, mesh.rotation[0]);
-	mat4.rotateY(tmp, tmp, mesh.rotation[1]);
-	mat4.rotateZ(tmp, tmp, mesh.rotation[2]);
-	mat4.scale(tmp, tmp, mesh.scale);
-
-	bmin = vec3.fromValues(bbox.minx, bbox.miny, bbox.minz);
-	bmax = vec3.fromValues(bbox.maxx, bbox.maxy, bbox.maxz);
-	vec3.transformMat4(bmin, bmin, tmp);
-	vec3.transformMat4(bmax, bmax, tmp);
-
-	bbox.minx = bmin[0];
-	bbox.miny = bmin[1];
-	bbox.minz = bmin[2];
-	bbox.maxx = bmax[0];
-	bbox.maxy = bmax[1];
-	bbox.maxz = bmax[2];
-
-
-	/*bbox.minx *= mesh.scale[0];
-	bbox.miny *= mesh.scale[1];
-	bbox.minz *= mesh.scale[2];
-	bbox.maxx *= mesh.scale[0];
-	bbox.maxy *= mesh.scale[1];
-	bbox.maxz *= mesh.scale[2];
-
-	bbox.minx += mesh.translation[0];
-	bbox.miny += mesh.translation[1];
-	bbox.minz += mesh.translation[2];
-	bbox.maxx += mesh.translation[0];
-	bbox.maxy += mesh.translation[1];
-	bbox.maxz += mesh.translation[2];*/
-
-	return bbox;
 }
 
 function drawMesh(elt) {
@@ -955,6 +641,9 @@ function drawMesh(elt) {
 		mat4.invert(viewMatrix, camera.matrix);
 
 		mat4.multiply(worldMatrix, worldMatrix, globalSceneMatrix);
+
+		// automatic rotation animation
+		mat4.rotate(viewMatrix, viewMatrix, time, [0.0, 1.0, 0.0]);
 
 		mat4.translate(worldMatrix, worldMatrix, elt.translation);
 
@@ -983,10 +672,18 @@ function drawMesh(elt) {
 		gl.vertexAttribPointer(/*programParams.globals.textureCoord*/2, 2, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(/*programParams.globals.textureCoord*/2);
 		if (elt.material.texture !== null) {
+    		gl.uniform1i(programParams.globals.uSampler, 0);
 			// Tell WebGL we want to affect texture unit 0
 			gl.activeTexture(gl.TEXTURE0);
 			// Bind the texture to texture unit 0
 			gl.bindTexture(gl.TEXTURE_2D, elt.material.texture);
+		}
+		if (elt.material.speculaMap !== null) {
+    		gl.uniform1i(programParams.globals.uSpecularSampler, 1);
+			// Tell WebGL we want to affect texture unit 0
+			gl.activeTexture(gl.TEXTURE1);
+			// Bind the texture to texture unit 0
+			gl.bindTexture(gl.TEXTURE_2D, elt.material.specularMap);
 		}
 	}
 	else if (elt.material.textureType === gl.TEXTURE_CUBE_MAP) {
@@ -1006,6 +703,7 @@ function drawMesh(elt) {
 
 	// Set the globals shader uniforms
 	gl.uniformMatrix4fv(programParams.globals.projectionMatrix, false, projectionMatrix);
+	gl.uniformMatrix4fv(programParams.globals.textureMatrix, false, textureMatrix);
 	gl.uniformMatrix4fv(programParams.globals.viewMatrix, false, viewMatrix);
 	gl.uniformMatrix4fv(programParams.globals.normalMatrix, false, normalMatrix);
 	gl.uniformMatrix4fv(programParams.globals.worldMatrix, false, worldMatrix);
@@ -1015,8 +713,15 @@ function drawMesh(elt) {
 	gl.uniform1f(programParams.globals.alpha, elt.material.alpha);
 
 	gl.uniform1i(programParams.globals.useLight, useLight);
+	gl.uniform1i(programParams.globals.useTexture, useTexture);
+	gl.uniform1i(programParams.globals.useAmbientLight, useAmbientLight);
+	gl.uniform1i(programParams.globals.useDiffuseLight, useDiffuseLight);
+	gl.uniform1i(programParams.globals.useSpecularLight, useSpecularLight);
+	gl.uniform1i(programParams.globals.useSpecularMap, useSpecularMap);
+
 	gl.uniform3fv(programParams.globals.lightPos, lightPos);
 	gl.uniform3fv(programParams.globals.lightColor, lightColor);
+	gl.uniform3fv(programParams.globals.lightDirection, lightDirection);
 
 	//set specific shader uniforms
 	for (const key in programParams) {
@@ -1037,6 +742,10 @@ function drawMesh(elt) {
 						gl.uniform2fv(programParams[key], elt.material[key]);
 					}
 					else if (value.length === 3) {
+					    if (key === "color") {
+					        console.log(programParams[key]);
+					        console.log(elt.material[key]);
+					    }
 						gl.uniform3fv(programParams[key], elt.material[key]);
 					}
 					else if (value.length === 4) {
@@ -1080,47 +789,11 @@ function drawScene() {
 	                 300 //zFar
 	);
 
-	if (isAnimated) {
-		for (let mug of beerMugs) {
-			if (mug.isAnimated) {
-				mug.translation[0] += mug.translationSpeed;
-				mug.rotation[1] += mug.rotationSpeed;
-
-				if (mug.translation[0] > 14.) {
-					globalAcceleration += accelerationFactor;
-
-					mug.reset();
-					mug.isAnimated = true;
-
-					score++;
-					updateScoreDisplay();
-				}
-			}
-		}
-	}
-
 	for (let elt of scene) {
 		drawMesh(elt);
 	}
 
-	if (beerGlass !== null && isAnimated) {
-		for (let i = 0, len = beerMugs.length; i < len; i++) {
-			let beerMug = beerMugs[i];
-			let collide = isColliding(beerGlass, beerMug);
-
-			if (collide) {
-				isAnimated = false;
-
-				overlayOn();
-
-				setPlayerScore(score);
-				savePlayersData();
-
-				//displayBBox(beerMug);
-				//displayBBox(beerGlass);
-			}
-		}
-	}
+	time += isAnimated ? 0.01 : 0.0;
 
 	requestAnimationFrame(drawScene);
 }
