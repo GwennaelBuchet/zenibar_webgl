@@ -19,6 +19,13 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
     vertical-align: baseline;
 }
 
+::selection {
+    background: #ffb7b700; /* WebKit/Blink Browsers */
+}
+::-moz-selection {
+    background: #ffb7b700; /* Gecko Browsers */
+}
+
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
     display: block;
 }

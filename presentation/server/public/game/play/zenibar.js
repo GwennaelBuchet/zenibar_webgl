@@ -549,7 +549,7 @@ function loadScene() {
 	scene.push(eltBack);
 
 	//mirror table
-	let tableMesh = loadSquare(14, 2.5, 0, 0.4);
+	let tableMesh = loadSquare(14, 5., 0, 0.65);
 	mirrorTable = {
 		name: "mirror",
 		mesh: tableMesh,
