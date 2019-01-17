@@ -73,12 +73,22 @@ function initEvents(canvas) {
 	canvas.addEventListener("mousewheel", handleMouseWheel, false);
 	canvas.addEventListener("DOMMouseScroll", handleMouseWheel, false);
 
+	canvas.addEventListener("mouseenter", handleMouseEnter, false);
+
 	document.addEventListener("keydown", handleKeyDown, true);
 }
 
 let mouseDown = false;
 let lastMouseX = null;
 let lastMouseY = null;
+
+function handleMouseEnter(event) {
+	let newX = event.clientX;
+	let newY = event.clientY;
+
+	console.log (newX);
+	console.log (newY);
+}
 
 function handleMouseDown(event) {
 	mouseDown = true;
@@ -99,8 +109,8 @@ function handleMouseMove(event) {
 	let newX = event.clientX;
 	let newY = event.clientY;
 
-	let deltaX = (newX - lastMouseX) / 35.;
-	let deltaZ = (newY - lastMouseY) / 35.;
+	let deltaX = (newX - lastMouseX) / 55.;
+	let deltaZ = (newY - lastMouseY) / 15.;
 
 	moveGlass(deltaX, deltaZ);
 
@@ -546,8 +556,8 @@ function loadMug() {
 			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
 			this.rotation = [0, Math.random(), 0];
 			this.scale = [0.25, 0.25, 0.25];
-			this.translationSpeed = Math.min(0.04 + Math.random() / 30. + globalAcceleration, maxSpeed);
-			this.rotationSpeed = Math.min(-0.01 + Math.random() / 40. + globalAcceleration, maxSpeed);
+			this.translationSpeed = Math.min(0.04 + Math.random() / 20. + globalAcceleration, maxSpeed);
+			this.rotationSpeed = Math.min(-0.01 + Math.random() / 30. + globalAcceleration, maxSpeed);
 			this.isAnimated = false;
 
 			let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
@@ -880,6 +890,8 @@ function resetGame() {
 	for (let mug of beerMugs) {
 		mug.reset();
 		mug.isAnimated = false;
+		globalAcceleration = 0.;
+		accelerationFactor = 0.01;
 
 		score = 0;
 		updateScoreDisplay();

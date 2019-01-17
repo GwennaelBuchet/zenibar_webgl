@@ -55,7 +55,9 @@ const pages = [
 	//"/demo_03_light/1/index.html", 		// Interpolation des normals
 	"/demo_03_light/2/index.html", 		// Phong Shading
 	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
-	"/thanks/index.html", // <== For the last slide /!\ Take care: that makes a loop /!\
+	"/game/accueil/index.html",
+	"/game/play/index.html",
+	"/thanks/index.html",
 ];
 const currentPage = window.location.pathname;
 const currentPageIndex = pages.indexOf(currentPage);
