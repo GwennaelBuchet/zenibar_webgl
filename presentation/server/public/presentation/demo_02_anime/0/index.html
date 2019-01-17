@@ -19,7 +19,7 @@
     <!-- Header -->
     <header id="header">
         <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-        <h1>Ajout d'un peu d'animation</h1>
+        <h1>Modifier les différentes matrices ...</h1>
     </header>
 
 
@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="column-right">
-            <h2>Les rotations</h2>
+            <h2>Exemple d'une rotation</h2>
 
             <br/>
             <h3>Cube de gauche</h3>
@@ -55,22 +55,12 @@
                 [0, -1, 0]);        // axis to rotate around (Y) clockwise</pre>
             
             <br/>
-            <h3>Cube de droite</h3>
-            <pre class="prettyprint lang-js">
-    let modelViewMatrix = mat4.create();
-    //let's rotate the global view
-    mat4.rotate(modelViewMatrix,    // destination matrix
-                modelViewMatrix,    // matrix to rotate
-                INCREMENT,          // rotation angle in radians
-                [0, 1, 0]);         // axis to rotate around (Y) counterclockwise
-    
-    mat4.rotate(modelViewMatrix,    // destination matrix
-                modelViewMatrix,    // matrix to rotate
-                INCREMENT,          // rotation angle in radians
-                [0, 0, 0.5]);       // axis to rotate around (Z) half counterclockwise</pre>
-            
-            <br/>
-            <br/>
+
+            <pre class="prettyprint lang-js" style="margin-top:0">
+    gl.uniformMatrix4fv(
+        gl.getUniformLocation(program, 'uModelViewMatrix'),    // where to push my matrix
+        false,                                                 // transpose
+        modelViewMatrix);                                      // the matrix I want to push</pre>
             <br/>
             Allez !! Fais tourner ! (Appuyer sur 'R' pour incrémenter INCREMENT)
         </div>
