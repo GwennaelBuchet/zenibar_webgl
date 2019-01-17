@@ -52,7 +52,7 @@
 
     // indices of vertices for each face
     const indices = [
-        0, 1, 2,   0, 2, 3  // front face
+        0, 1, 2,   1, 2, 3  // front face
         ...
     ];
 
@@ -114,7 +114,7 @@
                 previousPage();
             }
         }
-        drawMode = 3; // gl.LINES
+        drawMode = 3; // gl.LINE_STRIP
     </script>
     
 </body>
