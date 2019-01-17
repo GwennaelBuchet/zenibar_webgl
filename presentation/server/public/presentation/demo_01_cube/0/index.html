@@ -13,56 +13,62 @@
     <link rel="stylesheet" type="text/css" href="../../assets/main.css"/>
 </head>
 <body>
-    <!-- Wrapper -->
-    <div id="wrapper">
-        <!-- Header -->
-        <header id="header">
-            <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-            <h1>Une spec, des extensions</h1>
-        </header>
-        <!-- Main -->
-        <section id="content">
+<!-- Wrapper -->
+<div id="wrapper">
+    <!-- Header -->
+    <header id="header">
+        <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
+        <h1>Une spécification & des extensions</h1>
+    </header>
+    <!-- Main -->
+    <section id="content">
 
-            <div class="column-left">
-                <canvas id="scene" width="640px" height="640px" style="background: black">
-                    It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
-                    It's time to come back to the present days... :(
-                </canvas>
+        <div class="column-left">
+            <canvas id="scene" width="640px" height="640px" style="background: black">
+                It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
+                It's time to come back to the present days... :(
+            </canvas>
 
-                <div id="noContextLayer" style="display: none">
-                    <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
-                    <h3>It's time to come back to the present days...</h3>
-                </div>
-                <h2>
-                    1er cube fixe et sans éclairage : 300 lignes de code 😓
-                </h2>
-                <div class="company-logo">
-                    <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
-                    <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
-                    <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
-                </div>
+            <div id="noContextLayer" style="display: none">
+                <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
+                <h3>It's time to come back to the present days...</h3>
             </div>
-            <div class="column-right">
-
-                <img src="../../../assets/WebGL.png" style="text-align: center">
-
-                <br/>
-
-                <h2>Calculer la position des vertices et la couleur des fragments</h2>
-                <img src="../../assets/gl-pipeline.png" width="100%">
-                <br/>
-                <!--h2>4 étapes principales :</h2>
-                <ol>
-                    <li>Initier le contexte WebGL</li>
-                    <li>Définir les buffers & les matrices (CPU)</li>
-                    <li>Calculer la position des vertices (Vertex shader, GPU)</li>
-                    <li>Calculer la couleur des fragments (Fragment shader, GPU)</li>
-                </ol-->
+            <h3>
+                1er cube fixe et sans éclairage : 300 lignes de code 😓
+            </h3>
+            <div class="company-logo">
+                <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
+                <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
+                <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
             </div>
-        </section>
-    </div>
+        </div>
+        <div class="column-right">
 
-    <script id="vshader-simple" type="x-shader/x-vertex">#version 300 es
+            <div class="align-center">
+                <br/>
+                <br/>
+                <br/>
+                <img src="../../../assets/WebGL.png">
+            </div>
+            <br/>
+            <hr/>
+
+            <h2 class="align-center">Calculer la position des vertices & la couleur des fragments</h2>
+
+            <div class="align-center"><img src="../../assets/gl-pipeline.png" width="100%"></div>
+            <br/>
+            <!--h2>4 étapes principales :</h2>
+            <ol>
+                <li>Initier le contexte WebGL</li>
+                <li>Définir les buffers & les matrices (CPU)</li>
+                <li>Calculer la position des vertices (Vertex shader, GPU)</li>
+                <li>Calculer la couleur des fragments (Fragment shader, GPU)</li>
+            </ol-->
+        </div>
+    </section>
+</div>
+
+<script id="vshader-simple" type="x-shader/x-vertex">#version 300 es
         in vec4 aVertexPosition;
         in vec4 aVertexColor;
 
@@ -76,9 +82,10 @@
             gl_PointSize = 10.0;
             vColor = aVertexColor;
         }
-    </script>
 
-    <script id="fshader-simple" type="x-shader/x-fragment">#version 300 es
+</script>
+
+<script id="fshader-simple" type="x-shader/x-fragment">#version 300 es
         precision mediump float;
 
         in lowp vec4 vColor;
@@ -87,24 +94,27 @@
         void main(void) {
             outColor = vColor;
         }
-    </script>
 
-    <script src="../../js/run-prettify.js?skin=sunburst"></script>
+</script>
 
-    <script src="../../js/init.js"></script>
-    <script src="../gl-matrix.js"></script>
-    <script src="../zenibar.js"></script>
+<script src="../../js/run-prettify.js?skin=sunburst"></script>
 
-    <script>
-        document.addEventListener("keydown", navigation, false);
-        function navigation(event) {
-            if (event.key.toUpperCase() === "ARROWRIGHT") {
-                nextPage();
-            } else if (event.key.toUpperCase() === "ARROWLEFT") {
-                previousPage();
-            }
-        }
-    </script>
-    
+<script src="../../js/init.js"></script>
+<script src="../gl-matrix.js"></script>
+<script src="../zenibar.js"></script>
+
+<script>
+	document.addEventListener("keydown", navigation, false);
+
+	function navigation(event) {
+		if (event.key.toUpperCase() === "ARROWRIGHT") {
+			nextPage();
+		}
+		else if (event.key.toUpperCase() === "ARROWLEFT") {
+			previousPage();
+		}
+	}
+</script>
+
 </body>
 </html>

@@ -38,12 +38,12 @@ const pages = [
 	"/accueil/index.html",
 	"/zenibar/index.html",
 	"/bonsoir/index.html",
-	"/archibar/index.html",
-	"/demo_01_cube/0/index.html", 		// les 4 étapes principales
+	//"/archibar/index.html",
+	"/demo_01_cube/0/index.html", 		// l'historique et le positionnement
 	"/demo_01_cube/1/index.html", 		// Initialiser le context WebGL2
 	"/demo_01_cube/2/index.html", 		// Remplir le buffer des positions
 	"/demo_01_cube/3/index.html", 		// Remplir le buffer des indices
-	//"/demo_01_cube/4/index.html", 		// Remplir le buffer des couleurs
+	"/demo_01_cube/4/index.html", 	    // les matrices
 	"/demo_01_cube/5/index.html", 		// Matrice de Projection et de Vue
 	"/demo_01_cube/6/index.html", 		// Calculate Vertices Position
 	"/demo_01_cube/7/index.html", 		// Calculate Fragments Position
