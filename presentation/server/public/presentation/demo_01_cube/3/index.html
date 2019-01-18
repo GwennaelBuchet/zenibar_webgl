@@ -38,14 +38,14 @@
                     <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
                 </div>
             </div>
-            <div class="column-right">
-                <h2>Etape 2 : Définir les buffers <span style="color:grey">& les matrices</span></h2>
+            <div class="column-right" style="overflow: hidden">
+                <h2>Etape 2 : Définir les buffers</h2>
 
                 <p style="text-align: center">
-                    <img src="../../assets/vertex_indices_buffer.png" height="180px">
+                    <img src="../../assets/vertex_indices_buffer.png" height="170px">
                 </p>
 
-                <h3>2. Définir les faces (i.e. l'ordre des vertices à afficher, par groupe de 3) :</h3>
+                <h4>2. Définir les faces (i.e. l'ordre des vertices à afficher, par groupe de 3) :</h4>
                 <pre class="prettyprint lang-js">
     // Buffer for the cube's vertices indices.
     const indicesBuffer = gl.createBuffer();
@@ -61,7 +61,7 @@
     // Fill the buffer with vertices positions
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);</pre>
 
-                <h3>3. Afficher les faces (appuyer sur 'T') :</h3>
+                <h4>3. Afficher les faces (appuyer sur 'T') :</h4>
                 <pre class="prettyprint lang-js">
     // Let's render
     gl.drawElements(gl.TRIANGLES,
