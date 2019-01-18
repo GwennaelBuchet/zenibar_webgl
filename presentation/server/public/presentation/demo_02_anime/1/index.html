@@ -50,7 +50,7 @@
     // As it's now animated, we use the requestAnimationFrame function to smooth it up
     var render = function(now) {
       drawScene(gl, programInfo, buffers);
-  
+      INCREMENT += 0.001;
       requestAnimationFrame(render);
     }
   

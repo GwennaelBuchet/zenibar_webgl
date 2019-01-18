@@ -52,8 +52,8 @@ const pages = [
 	"/demo_02_anime/1/index.html", 		// Boucle de rendu
 	"/demo_cube_wave/index.html",
 	"/demo_03_light/0/index.html", 		// Définition des normals
-	//"/demo_03_light/1/index.html", 		// Interpolation des normals
-	"/demo_03_light/2/index.html", 		// Phong Shading
+	"/demo_03_light/1/index.html", 		// Phong Shading
+	// "/demo_03_light/2/index.html", 		// Interpolation des normals
 	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
 	"/game/accueil/index.html",
 	"/game/play/index.html",

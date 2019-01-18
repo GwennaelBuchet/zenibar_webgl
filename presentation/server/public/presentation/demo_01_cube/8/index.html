@@ -48,16 +48,48 @@
             </div>
             <div class="column-right">
                 <h2>But... Wait ! Is it automagic ?</h2>
+
+                <p style="text-align: center">
+                    <img src="../../assets/gl-pipeline.png" height="180px">
+                </p>
                 
-                <h3>&nbsp; TODO : schéma communication CPU->GPU</h3>
-
-
-                <h3>Communication CPU -> GPU</h3>
+                <!-- <div style="overflow: hidden;height: 120px;max-height: 120px;position: relative;/* text-align: center; */display: block;">
+                    <img src="../../assets/gl-pipeline.png" style="display: block; width: 800px; height: auto; position: absolute; bottom: 0; text-align: center;">
+                </div> -->
+                
+                <br/>
                 <pre class="prettyprint lang-js" style="margin-top:0">
     gl.uniformMatrix4fv(
         gl.getUniformLocation(program, 'uProjectionMatrix'),    // where to push my matrix
         false,                                                  // transpose
         projectionMatrix);                                      // the matrix I want to push</pre>
+
+                <p style="text-align: center">
+                    <img src="../../assets/pipe.png" width="200" height="30px" style="text-align: center">
+                </p>
+                <pre class="prettyprint lang-js">
+    layout(location = 0) in vec4 aVertexPosition;
+    layout(location = 1) in vec4 aVertexColor;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    out lowp vec4 vColor;
+
+    void main(void) {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        vColor = aVertexColor;
+    }</pre>
+                
+                <p style="text-align: center">
+                    <img src="../../assets/pipe.png" width="200" height="30px" style="text-align: center">
+                </p>
+                <pre class="prettyprint lang-js">
+    in lowp vec4 vColor;
+    out vec4 outColor;
+
+    void main(void) {
+        outColor = vColor;
+    }</pre>
+                
             </div>
         </section>
     </div>
