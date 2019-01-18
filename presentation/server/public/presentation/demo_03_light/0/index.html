@@ -42,14 +42,14 @@
             </div>
         </div>
         <div class="column-right">
-            <h2>Les trois composantes de la lumière</h2>
+            <h2>La lumière n'existe pas... Mais on peut simuler son effet</h2>
+            
+            <h3>LE pré-requis : les Normals</h3>
+            <p style="text-align: center">
+                <img src="../../assets/sphere_normals.png" height="400px" width="400px">
+            </p>
 
-            <h3><img src="../../assets/phong_ambient.png" height="170px" style="vertical-align: middle" />Lumière Ambiante : elle éclaire toute chose</h3>
-            <h3><img src="../../assets/phong_diffuse.png" height="170px" style="vertical-align: middle" />Lumière Directionnelle : elle n'éclaire que les surfaces qui lui font face</h3>
-            <h3><img src="../../assets/phong_specular.png" height="170px" style="vertical-align: middle" />Lumière Spéculaire : elle est reflétée par les surfaces en fonction d'un certain angle</h3>
-            <br/>
-            <h3><img src="../../assets/phong.png" height="170px" style="vertical-align: middle" />Pour donner le rendu de Phong</h3>
-            <br/><br/>
+            <br/><br/><br/><br/><br/><br/>
             <h3>'A' pour l'éclairage Ambiant / 'D' pour l'éclairage Directionnel / 'S' pour l'éclairage Spéculaire</h3>
         </div>
     </section>
@@ -97,7 +97,7 @@
         uniform bool uUseDiffuseLight;
         uniform bool uUseSpecularLight;
 
-        const vec3 cLightPos = vec3(10.0, 0.0, 10.0);
+        const vec3 cLightPos = vec3(5.0, 0.0, 10.0);
         const float cShininess = 400.0;
         const vec4 cAmbientColor = vec4(0.1, 0.1, 0.1, 1.0);
         const vec4 cSpecularColor = vec4(1.0, 1.0, 1.0, 1.0);
@@ -108,9 +108,9 @@
         out vec4 outColor;
     
         void main() {
-            Ka = uUseAmbientLight  ? Ka : 0.0;
-            Kd = uUseDiffuseLight  ? Kd : 0.0;
-            Ks = uUseSpecularLight ? Ks : 0.0;
+            Ka = uUseAmbientLight  ? 1.0 : 0.0;
+            Kd = uUseDiffuseLight  ? 1.0 : 0.0;
+            Ks = uUseSpecularLight ? 1.0 : 0.0;
 
             vec3 N = normalize(vNormal);
             vec3 L = normalize(cLightPos - vPosition);
@@ -133,7 +133,8 @@
         }
       </script>
 
-      <script type="application/javascript">
+
+    <script type="application/javascript">
 		var normals = [
             // Front face
             0.0,  0.0,  1.0,
