@@ -22,15 +22,11 @@
     </header>
     <!-- Main -->
     <section id="content">
-        <div class="column-left">
-            <canvas id="scene" width="640px" height="640px" style="background: black">
-                It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
-                It's time to come back to the present days... :(
-            </canvas>
 
-            <div id="noContextLayer" style="display: none">
-                <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
-                <h3>It's time to come back to the present days...</h3>
+        <div class="column-left">
+            <div class="transformation">
+                <img src="../../../assets/simple_transformations.jpg"/>
+                <p>src : https://solarianprogrammer.com</p>
             </div>
             <div class="company-logo">
                 <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
@@ -38,6 +34,7 @@
                 <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
             </div>
         </div>
+
         <div class="column-right">
             <h2>Etape 3 : Définir les transformations (ie, les matrices)</h2>
 
@@ -58,9 +55,12 @@
             <br/>
             <h3>Appliquer une rotation :</h3>
             <div class="align-center">
-                <span style="vertical-align: top;">X :</span> <img src="../../../assets/matrice_rotation_X.png" class="shadowed"/>
-                <span style="vertical-align: top;"> ; Y :</span> <img src="../../../assets/matrice_rotation_Y.png" class="shadowed"/>
-                <span style="vertical-align: top;"> ; Z :</span> <img src="../../../assets/matrice_rotation_Z.png" class="shadowed"/>
+                <span style="vertical-align: top;">X :</span> <img src="../../../assets/matrice_rotation_X.png"
+                                                                   class="shadowed"/>
+                <span style="vertical-align: top;"> ; Y :</span> <img src="../../../assets/matrice_rotation_Y.png"
+                                                                      class="shadowed"/>
+                <span style="vertical-align: top;"> ; Z :</span> <img src="../../../assets/matrice_rotation_Z.png"
+                                                                      class="shadowed"/>
             </div>
         </div>
     </section>
@@ -85,6 +85,7 @@
 
 
 
+
 </script>
 
 <script id="fshader-simple" type="x-shader/x-fragment">#version 300 es
@@ -96,6 +97,7 @@
         void main(void) {
             outColor = vColor;
         }
+
 
 
 

@@ -84,9 +84,9 @@ blockquote {
     font-size: 0.9em;
     margin: 10px 0.25em;
     padding: 0.25em 0.65em;
-    min-width : 600px;
+    min-width: 600px;
     color: white;
-}
+
 
 canvas {
     background: black;
@@ -415,6 +415,7 @@ dl dd {
     -ms-flex-direction: column;
     flex-direction: column;
 }
+
 .logo-znk {
     background-color: #fff;
     height: 8rem;
