@@ -46,7 +46,7 @@
                     <img src="../../assets/vertex_indices_buffer.png" height="155px">
                 </p>
 
-                <h3>2. Définir les faces (i.e. l'ordre des vertices à afficher, par groupe de 3) :</h3>
+                <h3>• Définir les faces (i.e. l'ordre des vertices à afficher, par groupe de 3) :</h3>
                 <pre class="prettyprint lang-js">
     // Buffer for the cube's vertices indices.
     const indicesBuffer = gl.createBuffer();
@@ -62,7 +62,7 @@
     // Fill the buffer with vertices positions
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);</pre>
 
-                <h3>3. Afficher les faces (appuyer sur 'T') :</h3>
+                <h3>• Afficher les faces (appuyer sur 'T') :</h3>
                 <pre class="prettyprint lang-js">
     // Let's render
     gl.drawElements(gl.TRIANGLES,

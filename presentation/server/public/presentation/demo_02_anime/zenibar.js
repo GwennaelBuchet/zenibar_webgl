@@ -39,6 +39,11 @@ function main() {
 	requestAnimationFrame(render);
 
 	document.addEventListener("keydown", handleKeyDown, true);
+	document.addEventListener("keydown", function() {
+		if (event.key.toUpperCase() === "R") { // Rotate
+			INCREMENT += 0.0001;
+		}
+	}, true);
 }
 
 function handleKeyDown(event) {

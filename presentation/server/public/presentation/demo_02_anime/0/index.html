@@ -45,7 +45,7 @@
             <h2>Exemple d'une rotation</h2>
 
             <br/>
-            <h3>Cube de gauche</h3>
+            <h3>• Cube de gauche</h3>
             <pre class="prettyprint lang-js">
     let modelViewMatrix = mat4.create();
     //let's rotate the global view
@@ -61,7 +61,17 @@
         gl.getUniformLocation(program, 'uModelViewMatrix'),    // where to push my matrix
         false,                                                 // transpose
         modelViewMatrix);                                      // the matrix I want to push</pre>
-        <br/><br/><br/><br/><br/><br/><br/><br/>
+                
+            <br/>
+
+            <pre class="prettyprint lang-js" style="margin-top:0">
+    document.addEventListener("keydown", function() {
+        if (event.key.toUpperCase() === "R") { // Rotate
+            INCREMENT += 0.001;
+        }
+    }, true);</pre>
+
+            <br/><br/><br/><br/>
             Allez !! Fais tourner ! (Appuyer sur 'R' pour incrémenter INCREMENT)
         </div>
 

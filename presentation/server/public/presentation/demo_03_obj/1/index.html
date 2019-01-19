@@ -19,8 +19,9 @@
     <!-- Header -->
     <header id="header">
         <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-        <h1>Chargement d'objets et application des concepts</h1>
+        <h1>Appliquer le spéculaire localement</h1>
     </header>
+
 
     <section id="content">
         <div class="column-left">
@@ -41,18 +42,22 @@
             </div>
         </div>
         <div class="column-right">
+            <h2>Specular Map</h2>
             <br/>
+            <p style="text-align: center">
+                <img src="../../assets/beer-bottle.jpg" width="510px" style="border: solid black 1px">
+                <span style="font-size: 48px; margin-top: 230px; display: inline-block; vertical-align: top;">X</span>
+                <img src="../../assets/beer-bottle.png" width="510px" style="border: solid black 1px">
+            </p>
+
             <br/>
-            <br/>
-            <h3>• Définir les <b>Vertices</b> (Appuyer sur 'A')</h3>
-            <br/>
-            <h3>• Définir les <b>Indices</b> pour relier les vertices (Appuyer sur 'W')</h3>
-            <br/>
-            <h3>• Calculer les <b>Fragments</b> pour afficher les surfaces (Appuyer sur 'T')</h3>
-            <br/>
-            <h3>• Appliquer des <b>Textures</b> (Appuyer sur 'Z')</h3>
-            <br/>
-            <h3>• Définir les <b>Normals</b> pour simuler la lumière (Appuyer sur 'L')</h3>
+            <pre class="prettyprint">
+    fragColor = ambientColor +
+                diffuse * texelColor +
+                specular * specularMapColor * specularColor;</pre>
+                            
+            <br/><br/><br/>
+            <h4>'M' : Toggle SpecularMap</h4>
         </div>
     </section>
 
@@ -154,12 +159,12 @@
         }
 
         isAnimated = true;
-        useTexture = false;
-        useAmbientLight = false;
-        useDiffuseLight = false;
-        useSpecularLight = false;
+        useTexture = true;
+        useAmbientLight = true;
+        useDiffuseLight = true;
+        useSpecularLight = true;
         useSpecularMap = false;
-        drawMode = 0; // gl.POINTS
+        drawMode = 4; // gl.TRIANGLES
     </script>
     
 </body>
