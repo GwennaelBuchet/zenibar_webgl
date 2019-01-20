@@ -54,15 +54,16 @@
                     <img src="../../assets/gl-pipeline.png" style="display: block; width: 800px; height: auto; position: absolute; bottom: 0; text-align: center;">
                 </div> -->
                 
-                <br/>
+                <p>JS :</p>
                 <pre class="prettyprint lang-js" style="margin-top:0">
     gl.uniformMatrix4fv(
         gl.getUniformLocation(program, 'uProjectionMatrix'),    // where to push my matrix
         false,                                                  // transpose
         projectionMatrix);                                      // the matrix I want to push</pre>
 
-                <p style="text-align: center">
-                    <img src="../../assets/pipe.png" width="200" height="30px" style="text-align: center">
+                <p class="bicolumns">
+                    <span style="text-align: left;">Vertex Shader :</span>
+                    <span style="text-align: center;"><img src="../../assets/pipe2.png" width="200" height="30px" style="margin-left: -230px;"></span>
                 </p>
                 <pre class="prettyprint lang-js">
     layout(location = 0) in vec4 aVertexPosition;
@@ -75,8 +76,9 @@
         vColor = aVertexColor;
     }</pre>
                 
-                <p style="text-align: center">
-                    <img src="../../assets/pipe.png" width="200" height="30px" style="text-align: center">
+                <p class="bicolumns">
+                    <span style="text-align: left;">Fragment Shader :</span>
+                    <span style="text-align: center"><img src="../../assets/pipe2.png" width="200" height="30px" style="margin-left: -230px;"></span>
                 </p>
                 <pre class="prettyprint lang-js">
     in lowp vec4 vColor;
