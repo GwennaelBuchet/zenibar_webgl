@@ -150,10 +150,12 @@ function handleKeyDown(event) {
 		useDiffuseLight = !useDiffuseLight;
 	} else if (event.key.toUpperCase() === "S") { // Toggle Specular Light
 		useSpecularLight = !useSpecularLight;
+	} else if (event.key.toUpperCase() === "L") { // Toggle Diffuse+Specular Light
+		useDiffuseLight = !useDiffuseLight;
+		useSpecularLight = useDiffuseLight;
 	} else if (event.key.toUpperCase() === "M") { // Toggle Specular Map
 		useSpecularMap = !useSpecularMap;
 	}
-
 }
 
 function degToRad(degrees) {

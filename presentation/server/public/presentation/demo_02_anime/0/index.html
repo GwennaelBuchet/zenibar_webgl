@@ -34,7 +34,7 @@
                 <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
                 <h3>It's time to come back to the present days...</h3>
             </div>
-            <h2>&nbsp;</h2>
+            <h3>&nbsp;</h3>
             <div class="company-logo" style="vertical-align: bottom">
                 <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
                 <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
@@ -45,7 +45,7 @@
             <h2>Exemple d'une rotation</h2>
 
             <br/>
-            <h3>Cube de gauche</h3>
+            <h3>• Cube de gauche</h3>
             <pre class="prettyprint lang-js">
     let modelViewMatrix = mat4.create();
     //let's rotate the global view
@@ -61,7 +61,17 @@
         gl.getUniformLocation(program, 'uModelViewMatrix'),    // where to push my matrix
         false,                                                 // transpose
         modelViewMatrix);                                      // the matrix I want to push</pre>
+                
             <br/>
+
+            <pre class="prettyprint lang-js" style="margin-top:0">
+    document.addEventListener("keydown", function() {
+        if (event.key.toUpperCase() === "R") { // Rotate
+            INCREMENT += 0.001;
+        }
+    }, true);</pre>
+
+            <br/><br/><br/><br/>
             Allez !! Fais tourner ! (Appuyer sur 'R' pour incrémenter INCREMENT)
         </div>
 
