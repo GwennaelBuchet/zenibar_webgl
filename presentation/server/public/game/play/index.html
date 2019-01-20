@@ -624,6 +624,18 @@ void main(void) {
 		document.getElementById("overlay").style.display = "none";
 	}
 </script>
+<script>
+	document.addEventListener("keydown", navigation, false);
+
+	function navigation(event) {
+		if (event.key.toUpperCase() === "ARROWRIGHT") {
+			nextPage();
+		}
+		else if (event.key.toUpperCase() === "ARROWLEFT") {
+			previousPage();
+		}
+	}
+</script>
 
 </body>
 </html>
