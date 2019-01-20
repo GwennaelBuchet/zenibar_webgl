@@ -46,8 +46,8 @@ const pages = [
 	//"/demo_01_cube/6/index.html", 		// Calculate Vertices Position
 	//"/demo_01_cube/7/index.html", 		// Calculate Fragments Position
 	"/demo_01_cube/8/index.html", 		// La tuyauterie entre CPU et GPU
+	//"/demo_01_cube/5/index.html", 		// les réfélrentiels
 	"/demo_01_cube/4/index.html", 	    // les matrices
-	"/demo_01_cube/5/index.html", 		// Matrice de Projection et de Vue
 	"/demo_02_anime/0/index.html", 		// Modification de la matrice modelView
 	"/demo_02_anime/1/index.html", 		// Boucle de rendu
 	"/demo_cube_wave/index.html",

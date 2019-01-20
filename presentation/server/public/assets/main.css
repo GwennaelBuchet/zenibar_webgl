@@ -28,6 +28,10 @@ body {
     background-image: url("bg.jpg");
 }
 
+::selection {
+    background: #11111100;
+}
+
 ol, ul {
     list-style: none;
 }
@@ -1905,7 +1909,7 @@ h1 {
 
 @media screen and (max-width: 736px) {
     h1 {
-        font-size: 2.em;
+        font-size: 2 . em;
     }
 }
 
