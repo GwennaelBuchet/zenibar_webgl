@@ -56,6 +56,8 @@ const pages = [
 	// "/demo_03_light/2/index.html", 		// Interpolation des normals
 	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
 	"/demo_03_obj/1/index.html",	 		// Specular Map
+	"/demo_04_cubemap/0/index.html",	 		// Specular Map
+	"/demo_05_bump/0/index.html",	 		// Specular Map
 	"/game/accueil/index.html",
 	"/game/play/index.html",
 	"/thanks/index.html",
