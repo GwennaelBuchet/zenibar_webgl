@@ -4,8 +4,13 @@ A step-by-step Webgl small game development
 
 ## SETUP
 
-yarn install
+From ```"server"``` folder:
+```bash
+ yarn install
+```
 
 ## RUN
-
-yarn start
+From ```"server"``` folder:
+```bash
+sh ./launcher.sh
+```
