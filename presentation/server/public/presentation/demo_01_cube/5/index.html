@@ -18,35 +18,20 @@
         <!-- Header -->
         <header id="header">
             <span class="avatar"><img src="../../assets/beer2.jpg" alt=""/></span>
-            <h1>1ers concepts : les Buffers & Shaders</h1>
+            <h1>Passer d'un référentiel à l'autre</h1>
         </header>
         <!-- Main -->
-        <section id="content">
-            <div class="column-left">
-                <canvas id="scene" width="640px" height="640px" style="background: black">
-                    It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
-                    It's time to come back to the present days... :(
-                </canvas>
+        <section id="content_center">
 
-                <div id="noContextLayer" style="display: none">
-                    <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
-                    <h3>It's time to come back to the present days...</h3>
-                </div>
-                <h2>
-                    1er cube fixe et sans éclairage : 300 lignes de code 😓
-                </h2>
-                <div class="company-logo">
-                    <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
-                    <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
-                    <p style="text-align: center">&copy; Zenika 2019. All rights reserved.</p>
-                </div>
-            </div>
             <div class="column-right">
+
+                todo : ajouter schéma des matrice model -> view/camera -> projection
+
                 <h2>Etape 2 : Définir <span style="color:grey">les buffers &</span> les matrices</h2>
                 
                 <br/>
                 <h3>5. Définir la matrice de projection des objets (projectionMatrix) :</h3>
-                <pre class="prettyprint lang-js">
+                <pre style="text-align: left" class="prettyprint lang-js">
     const fieldOfView = 45 * Math.PI / 180;   // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     //define the field of view deepness
@@ -62,7 +47,7 @@
 
                 <br/>
                 <h3>6. Définir la matrice de positionnement des objets (modelViewMatrix) :</h3>
-                <pre class="prettyprint lang-js">
+                <pre style="text-align: left" class="prettyprint lang-js">
     let modelViewMatrix = mat4.create();
     // let's move the object to -10 along Z axis (to move away from the "camera")
     mat4.translate(modelViewMatrix,      modelViewMatrix,       [0.0, 0.0, -10.0]);
