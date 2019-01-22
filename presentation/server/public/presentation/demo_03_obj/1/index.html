@@ -54,7 +54,7 @@
             <pre class="prettyprint">
     fragColor = ambientColor +
                 diffuse * texelColor +
-                specular * specularMapColor * specularColor;</pre>
+                specular * specularColor * specularMapColor;</pre>
                             
             <br/><br/><br/>
             <h4>'M' : Toggle SpecularMap</h4>
@@ -158,7 +158,7 @@
             }
         }
 
-        isAnimated = true;
+        isAnimated = false;
         useTexture = true;
         useAmbientLight = true;
         useDiffuseLight = true;
