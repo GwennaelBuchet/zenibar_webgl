@@ -22,17 +22,56 @@
         <h1>Détection de collision</h1>
     </header>
 
-    <section id="content_center">
+    <section id="content">
 
+        <div class="column-left">
+
+            <img src="../../../assets/bbox_glasse_1.png" class="shadowed" style="margin-top: 20px;" />
+            <img src="../../../assets/bbox_glasse_2.png" class="shadowed" />
+        </div>
         <div class="column-right">
 
-            <h2>Bounding Box</h2>
+            <h2>Axis-Aligned Bounding Box (AABB)</h2>
+
+            <p>Faire vite et simple en calculant les collisions entre les boîtes englobantes, sur les 3 axes.</p>
+            <div style="text-align: center">
+                <img src="../../../assets/aabb.png" width="450px"/>
+            </div>
 
             <br/>
-            todo : plein de technique + focus sur BBox
-            <br/>
+            <pre class="prettyprint sunburst lang-js">
+function intersect(a, b) {
+  return (a.minX <= b.maxX && a.maxX >= b.minX) &&
+         (a.minY <= b.maxY && a.maxY >= b.minY) &&
+         (a.minZ <= b.maxZ && a.maxZ >= b.minZ);
+}</pre>
+            <hr/>
 
-            <img src="../../../assets/normal_map.png" style="width: 100%; max-width: 1127px;"/>
+            <table class="minimalistBlack" width="80%">
+                <thead>
+                <tr>
+                    <th>Inconvénients</th>
+                    <th>Avantages</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Nécessite de calculer les boîtes englobantes</td>
+                    <td>Rapide à calculer</td>
+                </tr>
+                <tr>
+                    <td>Nécessite des boîtes alignées sur un même repère</td>
+                    <td>Rapide à implémenter</td>
+                </tr>
+                <tr>
+                    <td>Pas très précis</td>
+                    <td>Suffisamment précis pour notre jeu</td>
+                </tr>
+                </tbody>
+                </tr>
+            </table>
+
+
         </div>
     </section>
 
@@ -45,10 +84,12 @@
 <script>
 
 	document.addEventListener("keydown", navigation, false);
+
 	function navigation(event) {
 		if (event.key.toUpperCase() === "ARROWRIGHT") {
 			nextPage();
-		} else if (event.key.toUpperCase() === "ARROWLEFT") {
+		}
+		else if (event.key.toUpperCase() === "ARROWLEFT") {
 			previousPage();
 		}
 	}

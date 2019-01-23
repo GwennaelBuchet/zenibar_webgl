@@ -16,6 +16,7 @@ let beerGlass = null;
 let beerMugs = [];
 let beerMugMesh = null;
 const NB_MUGS = 10;
+let displayBbox = false;
 
 let score = 0;
 let globalAcceleration = 0.;
@@ -55,7 +56,8 @@ function initGL(canvas) {
 	if (!gl) {
 		canvas.style.display = "none";
 		document.getElementById("noContextLayer").style.display = "block";
-	} else {
+	}
+	else {
 		drawMode = gl.TRIANGLES;
 	}
 }
@@ -86,8 +88,8 @@ function handleMouseEnter(event) {
 	let newX = event.clientX;
 	let newY = event.clientY;
 
-	console.log (newX);
-	console.log (newY);
+	console.log(newX);
+	console.log(newY);
 }
 
 function handleMouseDown(event) {
@@ -137,23 +139,31 @@ function handleMouseWheel(event) {
 function handleKeyDown(event) {
 	if (event.key.toUpperCase() === "L") {
 		useLight = !useLight;
-	} else if (event.key.toUpperCase() === "W") {
+	}
+	else if (event.key.toUpperCase() === "W") {
 		drawMode = gl.LINES;
-	} else if (event.key.toUpperCase() === "T") {
+	}
+	else if (event.key.toUpperCase() === "T") {
 		drawMode = gl.TRIANGLES;
-	} else if (event.key.toUpperCase() === "P") {
+	}
+	else if (event.key.toUpperCase() === "P") {
 		drawMode = gl.POINTS;
-	} else if (event.key.toUpperCase() === "M") {
+	}
+	else if (event.key.toUpperCase() === "M") {
 		startAMug();
-	} else if (event.key.toUpperCase() === "B") {
+	}
+	else if (event.key.toUpperCase() === "B") {
 		displayBBox(beerGlass);
-	} else if (event.key.toUpperCase() === "ARROWUP") {
+	}
+	else if (event.key.toUpperCase() === "ARROWUP") {
 		camera.position[1] += 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
-	} else if (event.key.toUpperCase() === "ARROWDOWN") {
+	}
+	else if (event.key.toUpperCase() === "ARROWDOWN") {
 		camera.position[1] -= 0.1; //Y axis
 		mat4.targetTo(camera.matrix, camera.position, camera.target, camera.up);
-	} else if (event.key === " ") {
+	}
+	else if (event.key === " ") {
 		isAnimated = !isAnimated;
 	}
 }
@@ -554,7 +564,7 @@ function loadMug() {
 
 		reset: function () {
 			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
-			this.rotation = [0, Math.random(), 0];
+			this.rotation = [0,0,0]; //[0, Math.random(), 0];
 			this.scale = [0.25, 0.25, 0.25];
 			this.translationSpeed = Math.min(0.04 + Math.random() / 20. + globalAcceleration, maxSpeed);
 			this.rotationSpeed = Math.min(-0.01 + Math.random() / 30. + globalAcceleration, maxSpeed);
@@ -851,25 +861,65 @@ function initCubeBuffers(minx, miny, minz, maxx, maxy, maxz) {
 }
 
 function displayBBox(mesh) {
-	let bboxGlass = applyTransfoToBbox(mesh);
-	let mGlass = initCubeBuffers(bboxGlass.minx, bboxGlass.miny, bboxGlass.minz, bboxGlass.maxx, bboxGlass.maxy,
-	                             bboxGlass.maxz);
-	meshes.push(mGlass);
-	let oGlass = {
-		name: "bboxGlass",
-		mesh: mGlass,
-		translation: [0, 0, 0],
-		rotation: [0, 0, 0],
-		scale: [1, 1, 1],
-		material: Object.assign({}, materials.phong)
-	};
-	oGlass.material.alpha = 0.5;
-	oGlass.material.ambientColor = [0.1, 0.1, 0.1];
-	oGlass.material.diffuseColor = [1, 1, 1];
-	oGlass.material.specularColor = [1., 1., 1.];
-	oGlass.material.useTexture = false;
-	oGlass.material.texture = null;
-	scene.push(oGlass);
+
+	/*if (displayBbox === true) {
+
+		for (let i=0; i<scene.length; i++) {
+			let elt = scene[i];
+			if (elt.isBBox === true){
+				scene = scene.splice(i, 1);
+			}
+		}
+
+		displayBbox = false;
+	}
+	else*/ {
+		displayBbox = true;
+		let bboxGlass = applyTransfoToBbox(mesh);
+		let mGlass = initCubeBuffers(bboxGlass.minx, bboxGlass.miny, bboxGlass.minz, bboxGlass.maxx, bboxGlass.maxy,
+		                             bboxGlass.maxz);
+		let oGlass = {
+			name: "bboxGlass",
+			mesh: mGlass,
+			translation: [0, 0, 0],
+			rotation: [0, 0, 0],
+			scale: [1, 1, 1],
+			material: Object.assign({}, materials.phong)
+		};
+		oGlass.material.alpha = 0.5;
+		oGlass.material.ambientColor = [0.1, 0.1, 0.1];
+		oGlass.material.diffuseColor = [1, 1, 1];
+		oGlass.material.specularColor = [1., 1., 1.];
+		oGlass.material.useTexture = false;
+		oGlass.material.texture = null;
+		oGlass.isBBox = true;
+		scene.push(oGlass);
+
+
+		for (let mug of beerMugs) {
+			let bboxMug = applyTransfoToBbox(mug);
+			let mMug = initCubeBuffers(bboxMug.minx, bboxMug.miny, bboxMug.minz, bboxMug.maxx, bboxMug.maxy,
+			                           bboxMug.maxz);
+
+			let oMug = {
+				name: "bboxGlass",
+				mesh: mMug,
+				translation: [0, 0, 0],
+				rotation: [0, 0, 0],
+				scale: [1, 1, 1],
+				material: Object.assign({}, materials.phong)
+			};
+			oMug.material.alpha = 0.5;
+			oMug.material.ambientColor = [0.1, 0.1, 0.1];
+			oMug.material.diffuseColor = [1, 1, 1];
+			oMug.material.specularColor = [1., 1., 1.];
+			oMug.material.useTexture = false;
+			oMug.material.texture = null;
+			oMug.isBBox = true;
+			scene.push(oMug);
+		}
+	}
+
 }
 
 function startAMug() {
@@ -1096,7 +1146,7 @@ function drawScene() {
 		for (let mug of beerMugs) {
 			if (mug.isAnimated) {
 				mug.translation[0] += mug.translationSpeed;
-				mug.rotation[1] += mug.rotationSpeed;
+				//mug.rotation[1] += mug.rotationSpeed;
 
 				if (mug.translation[0] > 14.) {
 					globalAcceleration += accelerationFactor;
