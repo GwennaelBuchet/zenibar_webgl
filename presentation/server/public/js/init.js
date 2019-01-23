@@ -59,10 +59,11 @@ const pages = [
 	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
 	"/demo_03_obj/1/index.html",	 		// Specular Map
 	"/demo_04_cubemap/0/index.html",	 		// Specular Map
-	"/demo_05_bump/0/index.html",	 		// bump Map
+	"/demo_07_bbox/0/index.html",	 		// collision
 	//"/demo_05_bump/0/index.html",	 		// aller plus loin
 	"/game/accueil/index.html",
 	"/game/play/index.html",
+	"/demo_05_bump/0/index.html",	 		// bump Map
 	"/thanks/index.html",
 ];
 const currentPage = window.location.pathname;
