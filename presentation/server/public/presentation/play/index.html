@@ -1,0 +1,639 @@
+<!DOCTYPE HTML>
+<!--
+	Visualize by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+    <title>Welcome to Zenibar !</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="../../assets/sunburst.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/main.css"/>
+
+    <style>
+        #overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.65);
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        #text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 50px;
+            color: white;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .cube {
+            width: 400px;
+            height: 100px;
+            -webkit-transition: all 250ms ease;
+            -moz-transition: all 250ms ease;
+            -o-transition: all 250ms ease;
+            transition: all 250ms ease;
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+            -ms-transform-style: preserve-3d;
+            -o-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        /* The two faces of the cube */
+        .default-state,
+        .active-state {
+            height: 100px;
+        }
+
+        /* Position the faces */
+        .default-state {
+            -webkit-transform: translateZ(50px);
+            -moz-transform: translateZ(50px);
+            -ms-transform: translateZ(50px);
+            -o-transform: translateZ(50px);
+            transform: translateZ(50px);
+        }
+
+        .flip-to-top .active-state {
+            -webkit-transform: rotateX(90deg) translateZ(150px);
+            -moz-transform: rotateX(90deg) translateZ(150px);
+            -ms-transform: rotateX(90deg) translateZ(150px);
+            -o-transform: rotateX(90deg) translateZ(150px);
+            transform: rotateX(90deg) translateZ(150px);
+        }
+
+        .flip-to-bottom .active-state {
+            -webkit-transform: rotateX(-90deg) translateZ(-50px);
+            -moz-transform: rotateX(-90deg) translateZ(-50px);
+            -ms-transform: rotateX(-90deg) translateZ(-50px);
+            -o-transform: rotateX(-90deg) translateZ(-50px);
+            transform: rotateX(-90deg) translateZ(-50px);
+        }
+
+        /* Rotate the cube */
+        .cube.flip-to-top:hover {
+            -webkit-transform: rotateX(-89deg);
+            -moz-transform: rotateX(-89deg);
+            -ms-transform: rotateX(-89deg);
+            -o-transform: rotateX(-89deg);
+            transform: rotateX(-89deg);
+        }
+
+        .cube.flip-to-bottom:hover {
+            -webkit-transform: rotateX(89deg);
+            -moz-transform: rotateX(89deg);
+            -ms-transform: rotateX(89deg);
+            -o-transform: rotateX(89deg);
+            transform: rotateX(89deg);
+        }
+
+        .cube {
+            text-align: center;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .default-state,
+        .active-state {
+            background: #2f2e2d;
+            font-size: 0.7em;
+            text-transform: uppercase;
+            color: #fff;
+            line-height: 100px;
+            -webkit-transition: background 250ms ease;
+            -moz-transition: background 250ms ease;
+            -o-transition: background 250ms ease;
+            transition: background 250ms ease;
+        }
+
+        .cube:hover .default-state {
+            background: #391c16;
+        }
+
+        .drink {
+            background: #465991;
+        }
+        .uber {
+            background: #913e34;
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+
+<!-- Wrapper -->
+<div id="wrapper">
+    <!-- Header -->
+    <header id="header" style="text-align: center">
+    </header>
+
+    <section id="content_center">
+
+        <div class="column-left">
+            <canvas id="scene" width="1280px" height="880px" style="background: black">
+                It should be a very cool 3D animation here, but your dinosaur does not support canvas tag. <br/>
+                It's time to come back to the present days... :(
+            </canvas>
+
+            <div id="noContextLayer" style="display: none">
+                <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
+                <h3>It's time to come back to the present days...</h3>
+            </div>
+        </div>
+    </section>
+
+    <div id="overlay">
+        <div id="text">
+            <p>Oups, you loose...</p>
+            <p>Should you consider to drink more to win?</p>
+
+            <div class="cube flip-to-top" onclick="overlayOff(); resetGame()">
+                <div class="default-state">
+                    <span>Let's drink a beer</span>
+                </div>
+                <div class="active-state drink">
+                    <span>Play Again</span>
+                </div>
+            </div>
+
+            <div class="cube flip-to-bottom" onclick="overlayOff(); location.href='../accueil/index.html?id='+idPlayer">
+                <div class="default-state">
+                    <span>No thx.</span>
+                </div>
+                <div class="active-state uber">
+                    <span>Call me a Uber, pls...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script id="skybox-vshader" type="x-shader/x-vertex">#version 300 es
+layout(location = 0) in vec3 aVertexPosition;
+
+uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
+
+out vec4 vVertexPosition;
+
+void main() {
+  vVertexPosition = vec4(aVertexPosition, 1.0);
+
+  gl_Position = vec4(aVertexPosition, 1.0);
+  //gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+}
+
+
+
+
+
+
+
+</script>
+
+<script id="skybox-fshader" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+
+in vec4 vVertexPosition;
+
+uniform samplerCube uSampler;
+uniform mat4 uViewDirectionProjectionInverse;
+
+out vec4 outColor;
+
+void main() {
+  vec4 t = uViewDirectionProjectionInverse * vVertexPosition;
+  outColor = texture(uSampler, normalize(t.xyz / t.w));
+}
+
+
+
+
+
+
+
+
+</script>
+
+
+<script id="reflect-vshader" type="x-shader/x-vertex">#version 300 es
+
+layout(location = 0) in vec3 aVertexPosition;
+layout(location = 1) in vec3 aVertexNormal;
+
+uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
+
+out vec3 vWorldPosition;
+out vec3 vWorldNormal;
+
+void main() {
+  // Multiply the position by the matrix.
+  gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+
+  // send the view position to the fragment shader
+  vWorldPosition = (uWorldMatrix * vec4(aVertexPosition, 1.0)).xyz;
+
+  // orient the normals and pass to the fragment shader
+  vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
+}
+
+
+
+
+
+
+</script>
+
+<script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+
+in vec3 vWorldPosition;
+in vec3 vWorldNormal;
+
+uniform samplerCube uSampler;
+// The position of the camera
+uniform vec3 uCameraPosition;
+uniform float uAlpha;
+
+out vec4 outColor;
+
+void main() {
+  vec3 worldNormal = normalize(vWorldNormal);
+  vec3 eyeToSurfaceDir = normalize(vWorldPosition - uCameraPosition);
+  vec3 direction = reflect(eyeToSurfaceDir, worldNormal);
+
+  outColor = texture(uSampler, direction) * 1.7;
+  outColor.a = uAlpha;
+}
+
+
+
+
+
+
+
+</script>
+
+<script id="refract-vshader" type="x-shader/x-vertex">#version 300 es
+
+layout(location = 0) in vec3 aVertexPosition;
+layout(location = 1) in vec3 aVertexNormal;
+
+uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix, uNormalMatrix;
+uniform vec3 uCameraPosition;
+
+// Indices of refraction
+const float Air = 1.0;
+const float Glass = 1.51714;
+
+// Air to glass ratio of the indices of refraction (Eta)
+const float Eta = Air / Glass;
+
+// see http://en.wikipedia.org/wiki/Refractive_index Reflectivity
+const float R0 = ((Air - Glass) * (Air - Glass)) / ((Air + Glass) * (Air + Glass));
+
+out vec3 vReflection;
+out vec3 vRefraction;
+out float vFresnel;
+
+void main() {
+  // Multiply the position by the matrix.
+  gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+
+  vec4 vertex = uViewMatrix * vec4(aVertexPosition, 1.0);
+
+	vec3 incident = normalize(vec3(vertex) - uCameraPosition);
+
+	// Assume incoming normal is normalized.
+	vec3 normal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+
+	vRefraction = refract(incident, normal, Eta);
+	vReflection = reflect(incident, normal);
+
+	// see http://en.wikipedia.org/wiki/Schlick%27s_approximation
+	vFresnel = R0 + (1.0 - R0) * pow((1.0 - dot(-incident, normal)), 5.0);
+
+	gl_Position = uProjectionMatrix * vertex;
+}
+
+
+
+
+
+
+
+
+</script>
+
+<script id="refract-fshader" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+
+uniform samplerCube uSampler;
+uniform float uAlpha;
+
+in vec3 vRefraction;
+in vec3 vReflection;
+in float vFresnel;
+
+out vec4 outColor;
+
+void main(void)
+{
+	vec4 refractionColor = texture(uSampler, normalize(vRefraction));
+	vec4 reflectionColor = texture(uSampler, normalize(vReflection));
+
+	outColor = mix(refractionColor, reflectionColor, vFresnel);
+	outColor.a = uAlpha;
+}
+
+
+
+
+
+
+
+
+</script>
+
+
+<script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
+
+layout(location = 0) in vec3 aVertexPosition;
+layout(location = 1) in vec3 aVertexNormal;
+layout(location = 2) in vec2 aTextureCoord;
+
+uniform mat4 uNormalMatrix, uViewMatrix, uProjectionMatrix, uWorldMatrix;
+
+out vec3 normalInterp;
+out vec3 vertPos;
+out vec2 vTextureCoord;
+
+void main()
+{
+    // Multiply the position by the matrix.
+    gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+
+    vec4 vertPos4 = uViewMatrix * vec4(aVertexPosition, 1.0);
+    vertPos = vec3(vertPos4) / vertPos4.w;
+    normalInterp = vec3(uNormalMatrix * vec4(aVertexNormal, 0.0));
+
+    vTextureCoord = aTextureCoord;
+}
+
+
+
+
+
+
+
+</script>
+
+<script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+out vec4 outColor;
+
+uniform vec3 uLightPos;
+uniform float uShininess;
+uniform float uKa;
+uniform float uKd;
+uniform float uKs;
+uniform vec3 uAmbientColor;
+uniform vec3 uDiffuseColor;
+uniform vec3 uSpecularColor;
+uniform float uAlpha;
+
+uniform sampler2D uSampler;
+uniform bool uUseTexture;
+uniform bool uUseLight;
+
+in vec3 normalInterp;
+in vec3 vertPos;
+in vec2 vTextureCoord;
+
+void main()
+{
+    vec3 texelColor;
+    if (uUseTexture == true) {
+        texelColor = vec3(texture(uSampler, vTextureCoord));
+    }
+    else {
+        texelColor = uDiffuseColor;
+    }
+
+    if (uUseLight) {
+        vec3 N = normalize(normalInterp);
+        vec3 L = normalize(uLightPos - vertPos);
+
+        // Lambert's cosine law
+        float lambertian = max(dot(N, L), 0.0);
+        float specular = 0.0;
+        if(lambertian > 0.0) {
+            vec3 R = reflect(-L, N);      // Reflected light vector
+            vec3 V = normalize(-vertPos); // Vector to viewer
+            // Compute the specular term
+            float specAngle = max(dot(R, V), 0.0);
+            specular = pow(specAngle, uShininess);
+        }
+
+        outColor = vec4(uKa * uAmbientColor +
+                        uKd * lambertian * texelColor +
+                        uKs * specular * uSpecularColor, uAlpha);
+    }
+    else {
+        outColor = vec4(texelColor, uAlpha);
+    }
+}
+
+
+
+
+
+
+
+
+</script>
+
+<script id="toon-vshader" type="x-shader/x-vertex">#version 300 es
+
+layout(location = 0) in vec3 aVertexPosition;
+layout(location = 1) in vec3 aVertexNormal;
+layout(location = 2) in vec2 aTextureCoord;
+
+//uniform mat4 uNormalMatrix, uViewMatrix, uProjectionMatrix, uCameraMatrix;
+uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
+
+out vec3 vWorldPosition;
+out vec3 vWorldNormal;
+
+void main()
+{
+  // Multiply the position by the matrix.
+  gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+
+  // send the view position to the fragment shader
+  vWorldPosition = (uWorldMatrix * vec4(aVertexPosition, 1.0)).xyz;
+
+  // orient the normals and pass to the fragment shader
+  vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
+}
+
+
+
+
+
+
+
+
+</script>
+
+<script id="toon-fshader" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+out vec4 outColor;
+
+uniform vec3 uLightPos;
+uniform vec3 uCameraPosition;
+uniform float uShininess;
+uniform float uKd;
+uniform float uKs;
+uniform vec3 uAmbientColor;
+uniform vec3 uDiffuseColor;
+uniform float uAlpha;
+
+in vec3 vWorldPosition;
+in vec3 vWorldNormal;
+
+//number of levels
+//for diffuse color
+const float levels = 3.0;
+const float scaleFactor = 1.0 / levels;
+
+void main()
+{
+    vec3 L = normalize(uLightPos - vWorldPosition);
+    vec3 V = normalize(uCameraPosition - vWorldPosition);
+
+    float diffuse = max(0.0, dot(L, vWorldNormal));
+    vec3 diffuseColor = uDiffuseColor * uKd * floor(diffuse * levels) * scaleFactor;
+
+    vec3 H = normalize(L + V);
+
+    float specular = 0.0;
+    if (dot(L, vWorldNormal) > 0.0)
+    {
+       specular = uKs * pow( max(0.0, dot( H, vWorldNormal)), uShininess);
+    }
+
+    //limit specular
+    float specMask = (pow(dot(H, vWorldNormal), uShininess) > 0.41) ? 0.5 : 0.;
+
+    float edgeDetection = (dot(V, vWorldNormal) > 0.1) ? 1. : 0.;
+
+    vec3 color = edgeDetection * (uAmbientColor + diffuseColor + specular * specMask);
+    //vec3 color = vec3(1.0, 1.0, 1.0);
+
+    outColor = vec4(color, uAlpha);
+}
+
+
+
+
+
+
+
+
+</script>
+
+<script id="background-vshader" type="x-shader/x-vertex">#version 300 es
+
+layout(location = 0) in vec3 aVertexPosition;
+layout(location = 2) in vec2 aTextureCoord;
+
+uniform mat4 uNormalMatrix;
+uniform mat4 uViewMatrix;
+uniform mat4 uProjectionMatrix;
+
+out vec2 vTextureCoord;
+
+void main(void) {
+  gl_Position = uProjectionMatrix  * vec4(aVertexPosition, 1.0);
+  vTextureCoord = aTextureCoord;
+}
+
+
+
+
+
+
+
+
+</script>
+
+<script id="background-fshader" type="x-shader/x-fragment">#version 300 es
+precision mediump float;
+
+in vec2 vTextureCoord;
+
+uniform sampler2D uSampler;
+
+out vec4 outColor;
+
+void main(void) {
+    outColor = texture(uSampler, vTextureCoord);
+}
+
+
+
+
+
+
+
+
+</script>
+
+<script src="../../js/init.js"></script>
+<script src="../players.js"></script>
+<script src="gl-matrix.js"></script>
+<!--script src="objLoader.js"></script-->
+<script src="webgl-obj-loader.js"></script>
+<script src="zenibar.js"></script>
+
+<script>
+	function overlayOn() {
+		document.getElementById("overlay").style.display = "block";
+	}
+
+	function overlayOff() {
+		document.getElementById("overlay").style.display = "none";
+	}
+</script>
+<script>
+	document.addEventListener("keydown", navigation, false);
+
+	function navigation(event) {
+		if (event.key.toUpperCase() === "ARROWRIGHT") {
+			nextPage();
+		}
+		else if (event.key.toUpperCase() === "ARROWLEFT") {
+			previousPage();
+		}
+	}
+</script>
+
+</body>
+</html>

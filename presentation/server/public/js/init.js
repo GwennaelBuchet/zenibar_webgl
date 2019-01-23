@@ -56,9 +56,10 @@ const pages = [
 	"/demo_03_light/0/index.html", 		// Définition des normals
 	"/demo_03_light/1/index.html", 		// Phong Shading
 	// "/demo_03_light/2/index.html", 		// Interpolation des normals
-	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
+	//"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
 	"/demo_03_obj/1/index.html",	 		// Specular Map
 	"/demo_04_cubemap/0/index.html",	 		// Specular Map
+	"/play/index.html",	 		// collision
 	"/demo_07_bbox/0/index.html",	 		// collision
 	//"/demo_05_bump/0/index.html",	 		// aller plus loin
 	"/game/accueil/index.html",
