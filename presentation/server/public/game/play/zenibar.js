@@ -564,10 +564,10 @@ function loadMug() {
 
 		reset: function () {
 			this.translation = [-16. + Math.random(), -4.5, -3. + Math.random() * 4.];
-			this.rotation = [0,0,0]; //[0, Math.random(), 0];
+			this.rotation = [0, Math.random(), 0];
 			this.scale = [0.25, 0.25, 0.25];
-			this.translationSpeed = Math.min(0.04 + Math.random() / 20. + globalAcceleration, maxSpeed);
-			this.rotationSpeed = Math.min(-0.01 + Math.random() / 30. + globalAcceleration, maxSpeed);
+			this.translationSpeed = Math.min(0.04 + Math.random() / 15. + globalAcceleration, maxSpeed);
+			this.rotationSpeed = Math.min(-0.01 + Math.random() / 15. + globalAcceleration, maxSpeed);
 			this.isAnimated = false;
 
 			let color = faceColors [Math.floor(Math.random() * Math.floor(faceColors.length + 1))];
@@ -1146,7 +1146,7 @@ function drawScene() {
 		for (let mug of beerMugs) {
 			if (mug.isAnimated) {
 				mug.translation[0] += mug.translationSpeed;
-				//mug.rotation[1] += mug.rotationSpeed;
+				mug.rotation[1] += mug.rotationSpeed;
 
 				if (mug.translation[0] > 14.) {
 					globalAcceleration += accelerationFactor;
