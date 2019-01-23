@@ -42,59 +42,104 @@
             </div>
         </div>
         <div class="column-right">
+            <h2>Application des Textures</h2>
             <br/>
             <br/>
             <br/>
-            <img src="../../assets/tex2.png" />
+            <img src="../../assets/tex2.png" width="100%"/>
         </div>
     </section>
 
 
-    <script id="texture-vshader" type="x-shader/x-vertex">#version 300 es
+    <script id="phong-vshader" type="x-shader/x-vertex">#version 300 es
         layout(location = 0) in vec3 aVertexPosition;
+        layout(location = 1) in vec3 aVertexNormal;
         layout(location = 2) in vec2 aTextureCoord;
 
-        uniform mat4 uViewMatrix, uProjectionMatrix, uWorldMatrix;
+        uniform mat4 uNormalMatrix, uViewMatrix, uProjectionMatrix, uWorldMatrix, uTextureMatrix;
 
+        out vec3 vNormal;
         out vec3 vPosition;
         out vec2 vTextureCoord;
 
         void main() {
             vec4 vPosition4 = uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
             vPosition = vec3(vPosition4) / vPosition4.w;
+            vNormal = vec3(uNormalMatrix * uWorldMatrix * vec4(aVertexNormal, 0.0));
 
-            vTextureCoord = aTextureCoord;
+            vTextureCoord = (uTextureMatrix * vec4(aTextureCoord, 0., 1.)).xy;
             gl_Position = uProjectionMatrix * vPosition4;
+            gl_PointSize = 2.0;
         }
     </script>
 
-    <script id="texture-fshader" type="x-shader/x-fragment">#version 300 es
+    <script id="phong-fshader" type="x-shader/x-fragment">#version 300 es
         precision mediump float;
+        in vec3 vNormal;
         in vec3 vPosition;
         in vec2 vTextureCoord;
-
+        
         uniform bool uUseTexture;
-
+        uniform bool uUseAmbientLight;
+        uniform bool uUseDiffuseLight;
+        uniform bool uUseSpecularLight;
+        uniform bool uUseSpecularMap;
+        
+        uniform vec3 uLightPos;
+        uniform float uShininess;
+        uniform float uKa;
+        uniform float uKd;
+        uniform float uKs;
+        uniform vec3 uAmbientColor;
+        uniform vec3 uDiffuseColor;
+        uniform vec3 uSpecularColor;
+        uniform float uAlpha;
+        
         uniform sampler2D uSampler;
-
+        uniform sampler2D uSpecularSampler;
+        
         out vec4 fragColor;
 
-        void main(void) {
+        void main(void) { // http://evasion.imag.fr/Enseignement/cours/2012/SIA/Shaders/tp1.html
+            float Ka = uUseAmbientLight  ? uKa : 0.0;
+            float Kd = uUseDiffuseLight  ? uKd : 0.0;
+            float Ks = uUseSpecularLight ? uKs : 0.0;
 
-            vec4 texelColor = uUseTexture ? texture(uSampler, vTextureCoord) : vec4(vec3(0.8), 1.0);
+            vec3 N = normalize(vNormal);
+            vec3 L = normalize(uLightPos - vPosition);
 
-            fragColor = texelColor;
+            // Lambert's cosine law
+            float lambertian = max(dot(N, L), 0.0);
+            float specular = 0.0;
+            if (lambertian > 0.0) {
+                vec3 R = reflect(-L, N);      // Reflected light vector
+                vec3 V = normalize(-vPosition); // Vector to viewer
+                // Compute the specular term
+                float specAngle = max(dot(R, V), 0.0);
+                specular = pow(specAngle, uShininess);
+            }
+
+            vec4 texelColor = uUseTexture ? texture(uSampler, vTextureCoord) : vec4(vec3(1), 1.0);
+            vec4 specularColor = uUseSpecularMap ? texture(uSpecularSampler, vTextureCoord) : vec4(1.0);
+            fragColor = vec4(Ka * vec4(uAmbientColor, 1.0) * (uUseDiffuseLight ? vec4(1.0) : (texelColor * 10.0)) +
+                            Kd * lambertian * texelColor +
+                            Ks * specular * vec4(uSpecularColor, 1.0) * specularColor);
           }
     </script>
 
-
-    <script src="../../../js/run-prettify.js?skin=sunburst"></script>
-    <script src="../../../js/init.js"></script>
+    <script src="../../js/run-prettify.js?skin=sunburst"></script>
+    <script src="../../js/init.js"></script>
+    <script src="../../js/webgl-obj-loader.js"></script>
     <script src="../gl-matrix.js"></script>
-    <script src="../zenibar.js"></script>
+    <script src="zenibar.js"></script>
 
     
     <script>
+        let newRotationMatrix = mat4.create();
+        mat4.rotate(newRotationMatrix, newRotationMatrix, 0.2, [1, 0, 0]);
+        // mat4.rotate(newRotationMatrix, newRotationMatrix, 1.0, [0, 1, 0]);
+        mat4.multiply(globalSceneMatrix, newRotationMatrix, globalSceneMatrix);
+
         document.addEventListener("keydown", navigation, false);
         function navigation(event) {
             if (event.key.toUpperCase() === "ARROWRIGHT") {
@@ -104,11 +149,16 @@
             }
         }
 
-        isAnimated = true;
+        time = 1.2;
+        isAnimated = false;
+        useTexture = true;
         useAmbientLight = true;
         useDiffuseLight = false;
         useSpecularLight = false;
+        useSpecularMap = false;
+        drawMode = 4; // gl.TRIANGLES
     </script>
+    
     
 </body>
 </html>
