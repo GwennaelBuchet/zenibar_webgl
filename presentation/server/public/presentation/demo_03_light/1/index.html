@@ -34,7 +34,7 @@
                 <h2>Ouch, your dinosaur does not support WebGL2 yet. </h2>
                 <h3>It's time to come back to the present days...</h3>
             </div>
-            <h3>&nbsp;</h3>
+            <h3 style="text-align: center">'A' : Ambiant / 'D' : Diffuse / 'S' : Spéculaire</h3>
             <div class="company-logo" style="vertical-align: bottom">
                 <div class="logo-znk"><img src="../../assets/znk.png" alt="logo-znk"></div>
                 <p style="text-align: center" class="company-tagline-1">&lt;animés par la passion&gt;</p>
@@ -44,13 +44,16 @@
         <div class="column-right">
             <h2>Le rendu de Phong</h2>
 
-            <h4><img src="../../assets/phong_ambient.png" height="160px" style="vertical-align: middle" />Ambiante : éclaire toute chose</h4>
-            <h4><img src="../../assets/phong_diffuse.png" height="160px" style="vertical-align: middle" />Directionnelle : n'éclaire que les surfaces qui lui font face</h4>
-            <h4><img src="../../assets/phong_specular.png" height="160px" style="vertical-align: middle" />Spéculaire : reflétée par les surfaces en fonction d'un certain angle</h4>
+            <h4><img src="../../assets/phong_ambient.png" height="140px" style="vertical-align: middle" />Lumière Ambiante : Ajoute de la couleur à la scène.</h4>
+            <h4><img src="../../assets/phong_diffuse.png" height="140px" style="vertical-align: middle" />Diffuse : la couleur du fragment, ombragé par l'angle lumière/normale.</h4>
+            <h4><img src="../../assets/phong_specular.png" height="140px" style="vertical-align: middle" />Spéculaire : reflet de la lumière.</h4>
             <br/>
-            <h4><img src="../../assets/phong.png" height="160px" style="vertical-align: middle" />Pour donner le rendu de Phong</h4>
+            <h4><img src="../../assets/phong.png" height="140px" style="vertical-align: middle" />Rendu final</h4>
             <br/><br/>
-            <h4>'A' : Toggle Ambiant / 'D' : Toggle Directionnel / 'S' : Toogle Spéculaire</h4>
+            <pre class="prettyprint">
+    fragColor = ambientColor +
+                diffuse * texelColor +
+                specular * specularColor;</pre>
         </div>
     </section>
 

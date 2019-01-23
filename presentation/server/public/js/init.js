@@ -51,13 +51,16 @@ const pages = [
 	"/demo_02_anime/0/index.html", 		// Modification de la matrice modelView
 	"/demo_02_anime/1/index.html", 		// Boucle de rendu
 	"/demo_cube_wave/index.html",
+	"/demo_03_texture/0/index.html", 		// Textures
+	"/demo_03_texture/1/index.html", 		// Textures
 	"/demo_03_light/0/index.html", 		// Définition des normals
 	"/demo_03_light/1/index.html", 		// Phong Shading
 	// "/demo_03_light/2/index.html", 		// Interpolation des normals
 	"/demo_03_obj/0/index.html",	 		// Chargement d'un OBJ
 	"/demo_03_obj/1/index.html",	 		// Specular Map
 	"/demo_04_cubemap/0/index.html",	 		// Specular Map
-	"/demo_05_bump/0/index.html",	 		// Specular Map
+	"/demo_05_bump/0/index.html",	 		// bump Map
+	//"/demo_05_bump/0/index.html",	 		// aller plus loin
 	"/game/accueil/index.html",
 	"/game/play/index.html",
 	"/thanks/index.html",
