@@ -3,9 +3,20 @@
 let express = require('express');
 let app = express();
 let http = require('http').Server(app);
-let ws = require("nodejs-websocket");
-let wss = null;
 
+const WebSocket = require('ws');
+let wsc = null;
+
+const wss = new WebSocket.Server({ port: 9898 });
+
+wss.on('connection', function connection(ws) {
+	wsc = ws;
+	ws.on('message', function incoming(message) {
+		console.log('received: %s', message);
+	});
+
+	ws.send('something');
+});
 
 let bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
@@ -31,6 +42,8 @@ app.post("/drink", function (req, res) {
 
 	console.log("Drink");
 
+	client.
+
 	wss.sendText(JSON.stringify({"action":"drink", "page": "/game/play/index.html"}));
 });
 
@@ -55,17 +68,3 @@ let server = app.listen(8090, function () {
 	let port = server.address().port;
 	console.log("Server running and listening @ " + host + ":" + port);
 });
-
-let serverws = ws.createServer(function (conn) {
-	console.log("New connection");
-
-	wss = conn;
-
-	conn.on("text", function (str) {
-		console.log("Received " + str);
-	});
-
-	conn.on("close", function (code, reason) {
-		console.log("Connection closed");
-	})
-}).listen(8081);

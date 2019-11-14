@@ -1,6 +1,6 @@
 function loadWS() {
 
-	this.ws = new WebSocket("ws://" + window.location.hostname + ":8081");
+	this.ws = new WebSocket("ws://" + window.location.hostname + ":9898");
 
 	this.ws.onopen = function (event) {
 		console.log("Websocket connection opened.");
