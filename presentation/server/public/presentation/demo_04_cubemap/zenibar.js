@@ -20,7 +20,8 @@ let lightPos = [10.0, 10.0, 10.0];
 let lightColor = [1.0, 1.0, 1.0];
 let drawMode = 4;
 
-let texPath = "../../assets/map_textures/irish_pub/";
+//let texPath = "../../assets/map_textures/irish_pub/";
+let texPath = "../../assets/bar_map/";
 
 let projectionMatrix = mat4.create();
 let globalSceneMatrix = mat4.create();
@@ -346,41 +347,40 @@ function loadTextures() {
 
 	textures.cubemap = loadTextureCubeMap();
 
-	textures.background = loadTexture2D(texPath+ "negz.png");
+	textures.background = loadTexture2D(texPath+ "negz.jpg");
 }
 
 function loadTextureCubeMap() {
 	let texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 
-
-
 	const faceInfos = [
 		{
 			target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-			url: texPath + "posx.png"
+			url: texPath + "posx.jpg"
 		},
 		{
 			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-			url: texPath + "negx.png"
+			url: texPath + "negx.jpg"
 		},
 		{
 			target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-			url: texPath + "posy.png"
+			url: texPath + "posy.jpg"
 		},
 		{
 			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-			url: texPath + "negy.png"
+			url: texPath + "negy.jpg"
 		},
 		{
 			target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-			url: texPath + "posz.png"
+			url: texPath + "posz.jpg"
 		},
 		{
 			target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-			url: texPath + "negz.png"
+			url: texPath + "negz.jpg"
 		}
 	];
+
 	faceInfos.forEach((faceInfo) => {
 		const {target, url} = faceInfo;
 

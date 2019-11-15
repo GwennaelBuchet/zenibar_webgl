@@ -104,6 +104,7 @@ void main() {
   // orient the normals and pass to the fragment shader
   vWorldNormal = mat3(uWorldMatrix) * aVertexNormal;
 }
+
 </script>
 
     <script id="reflect-fshader" type="x-shader/x-fragment">#version 300 es
@@ -124,7 +125,7 @@ void main() {
   vec3 eyeToSurfaceDir = normalize(vWorldPosition - uCameraPosition);
   vec3 direction = reflect(eyeToSurfaceDir, worldNormal);
 
-  outColor = texture(uSampler, direction) * 1.6;
+  outColor = texture(uSampler, direction) * 1.7;
   outColor.a = uAlpha;
 }
 </script>
