@@ -9,6 +9,7 @@ let wsc = null;
 
 const wss = new WebSocket.Server({ port: 9898 });
 
+
 wss.on('connection', function connection(ws) {
 	wsc = ws;
 	ws.on('message', function incoming(message) {
@@ -42,9 +43,7 @@ app.post("/drink", function (req, res) {
 
 	console.log("Drink");
 
-	client.
-
-	wss.sendText(JSON.stringify({"action":"drink", "page": "/game/play/index.html"}));
+	wsc.send(JSON.stringify({"action":"drink", "page": "/game/play/index.html"}));
 });
 
 app.post("/connect", function (req, res) {
@@ -54,7 +53,7 @@ app.post("/connect", function (req, res) {
 
 	console.log("connect : " + id);
 
-	wss.sendText(JSON.stringify({"action":"page", "page": "/game/accueil/index.html", "id": id}));
+	wsc.send(JSON.stringify({"action":"page", "page": "/game/accueil/index.html", "id": id}));
 });
 
 
